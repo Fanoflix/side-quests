@@ -1,6 +1,14 @@
+import { RotateCcw } from "lucide-react"
+
+import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Slider } from "@/components/ui/slider"
-import { TooltipProvider } from "@/components/ui/tooltip"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
 import { cn } from "@/lib/utils"
 import { COLUMN_LABEL, MONO } from "../styles"
 import type { ServerConfig } from "../engine/server"
@@ -23,11 +31,14 @@ export function Controls({
   onRung,
   serverConfig,
   onServerConfig,
+  onReset,
 }: {
   rung: RungId
   onRung: (rung: RungId) => void
   serverConfig: ServerConfig
   onServerConfig: (patch: Partial<ServerConfig>) => void
+  /** Rewind the active rung to its starting data and clear the timeline. */
+  onReset: () => void
 }) {
   const active = RUNGS[rung]
 
@@ -73,6 +84,29 @@ export function Controls({
           />
           Writes fail
         </label>
+
+        <Tooltip>
+          <TooltipTrigger
+            render={
+              // Styled `destructive` because the reset is a wipe — not a
+              // mistake we should let the reader click through without a
+              // second's hesitation. The red tint is the only chrome tell
+              // that this control throws the demo's state away.
+              <Button
+                size="sm"
+                variant="destructive"
+                className="h-7 gap-1.5 px-2 text-xs"
+                onClick={onReset}
+              >
+                <RotateCcw className="size-3.5" />
+                Reset
+              </Button>
+            }
+          />
+          <TooltipContent>
+            Reset this demo to its starting state.
+          </TooltipContent>
+        </Tooltip>
 
         <p
           className={cn(MONO, "ml-auto hidden text-muted-foreground xl:block")}

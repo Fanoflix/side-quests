@@ -101,6 +101,8 @@ export function AppMode({
             state={view.detailState}
             isMutating={view.isMutating}
             onStatus={view.setStatus}
+            onRename={view.rename}
+            onEditBody={view.setBody}
             onDelete={view.remove}
           />
         </div>

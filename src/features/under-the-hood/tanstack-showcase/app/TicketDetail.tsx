@@ -20,6 +20,8 @@ import type { LoadState } from "../rungs/contract"
 import type { Ticket, TicketStatus, TicketSummary } from "../engine/types"
 import { TicketComments } from "./TicketComments"
 import { AssigneeAvatar, STATUS_LABEL, StatusDot } from "./TicketMeta"
+import { BodyField } from "./BodyField"
+import { TitleField } from "./TitleField"
 import { displayName } from "./people"
 
 const STATUSES: TicketStatus[] = ["open", "in-progress", "done"]
@@ -53,6 +55,8 @@ export function TicketDetail({
   state,
   isMutating,
   onStatus,
+  onRename,
+  onEditBody,
   onDelete,
   onBack,
 }: {
@@ -61,6 +65,8 @@ export function TicketDetail({
   state: LoadState
   isMutating: boolean
   onStatus: (id: number, status: TicketStatus) => void
+  onRename: (id: number, title: string) => void
+  onEditBody: (id: number, body: string[]) => void
   onDelete: (id: number) => void
   /** Back to the inbox. Only shown where the two take turns. */
   onBack: () => void
@@ -86,6 +92,7 @@ export function TicketDetail({
           ticket={summary}
           isMutating={isMutating}
           onStatus={onStatus}
+          onRename={onRename}
           onDelete={onDelete}
           onBack={onBack}
         />
@@ -113,19 +120,20 @@ export function TicketDetail({
   return (
     <div className="flex h-full flex-col">
       <DetailHeader
-        ticket={ticket}
+        ticket={summary ?? ticket}
         isMutating={isMutating}
         onStatus={onStatus}
+        onRename={onRename}
         onDelete={onDelete}
         onBack={onBack}
       />
       <BodyArea>
-        <div className={cn(BODY_MIN_H, "space-y-3")}>
-          {ticket.body.map((line, i) => (
-            <p key={i} className="text-sm leading-relaxed text-pretty">
-              {line}
-            </p>
-          ))}
+        <div className={BODY_MIN_H}>
+          <BodyField
+            value={ticket.body}
+            onEdit={(next) => onEditBody(ticket.id, next)}
+            isMutating={isMutating}
+          />
         </div>
         <TicketComments comments={ticket.comments} />
       </BodyArea>
@@ -144,19 +152,24 @@ function DetailHeader({
   ticket,
   isMutating,
   onStatus,
+  onRename,
   onDelete,
   onBack,
 }: {
   ticket: TicketSummary
   isMutating: boolean
   onStatus: (id: number, status: TicketStatus) => void
+  onRename: (id: number, title: string) => void
   onDelete: (id: number) => void
   onBack: () => void
 }) {
   return (
     <header className="shrink-0 space-y-3 border-b border-border px-5 py-4">
-      <div className="flex items-start justify-between gap-4">
-        <div className="flex min-w-0 items-start gap-1">
+      {/* Centre the title and the controls on the same baseline so the
+          dropdown and the heading sit together, rather than the heading
+          starting a few pixels higher like it does with `items-start`. */}
+      <div className="flex items-center justify-between gap-4">
+        <div className="flex min-w-0 flex-1 items-center gap-1">
           {/* Only where the list isn't on screen beside this. */}
           <Button
             size="icon"
@@ -167,9 +180,11 @@ function DetailHeader({
           >
             <ChevronLeft className="size-4" />
           </Button>
-          <h2 className="text-base leading-snug font-semibold text-pretty">
-            {ticket.title}
-          </h2>
+          <TitleField
+            value={ticket.title}
+            onRename={(next) => onRename(ticket.id, next)}
+            isMutating={isMutating}
+          />
         </div>
 
         <div className="flex shrink-0 items-center gap-1">

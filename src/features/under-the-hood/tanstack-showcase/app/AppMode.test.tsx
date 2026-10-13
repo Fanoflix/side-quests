@@ -26,6 +26,8 @@ const view = (over: Partial<TicketsView> = {}): TicketsView => ({
   error: null,
   create: () => {},
   setStatus: () => {},
+  rename: () => {},
+  setBody: () => {},
   remove: async () => {},
   ...over,
 })

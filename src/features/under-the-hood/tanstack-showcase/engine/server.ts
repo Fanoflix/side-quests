@@ -340,6 +340,33 @@ export function createServer(bus: EventBus, config: ServerConfig) {
         true
       ),
 
+    renameTicket: (id: number, title: string, trace = `PATCH /tickets/${id}`) =>
+      handle(
+        `PATCH /tickets/${id}`,
+        trace,
+        () => {
+          rows = rows.map((t) => (t.id === id ? { ...t, title } : t))
+          const updated = rows.find((t) => t.id === id)!
+          return summarise(updated)
+        },
+        true
+      ),
+
+    setBody: (id: number, body: string[], trace = `PATCH /tickets/${id}`) =>
+      handle(
+        `PATCH /tickets/${id}`,
+        trace,
+        () => {
+          // Defensive copy: a shared reference would let a later edit mutate
+          // the stored row from outside.
+          const next = [...body]
+          rows = rows.map((t) => (t.id === id ? { ...t, body: next } : t))
+          const updated = rows.find((t) => t.id === id)!
+          return detailOf(updated)
+        },
+        true
+      ),
+
     deleteTicket: (id: number, trace = `DELETE /tickets/${id}`) =>
       handle(
         `DELETE /tickets/${id}`,

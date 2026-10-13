@@ -57,6 +57,16 @@ export function useTanstackShowcase() {
   const switchTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const [mode, setMode] = useState<Mode>("network")
   const [selectedId, setSelectedId] = useState<number | null>(null)
+  /**
+   * Bumped by the Reset button to force the current rung's host to remount.
+   *
+   * A remount tears down the data layer — rung 1's QueryClient, rung 2's
+   * collection, rung 0's `useState` — and the new one starts cold. One lever,
+   * all three rungs: the only alternative would be a per-rung reset handler
+   * that each hook implements and the showcase forwards to, which doesn't earn
+   * the extra surface area.
+   */
+  const [resetKey, setResetKey] = useState(0)
 
   const flows = useEventStream(bus)
   const timeline = useTimeline(flows, rung)
@@ -132,6 +142,22 @@ export function useTanstackShowcase() {
   )
 
   /**
+   * Reset the current rung to its starting state.
+   *
+   * The data layer leaves via the remount `resetKey` triggers; everything else
+   * is wiped in parallel — the seed is restored on the server, the timeline is
+   * cleared, the selection is dropped, and a fresh "First load" segment opens
+   * so the next request has somewhere to land. The rung itself doesn't change.
+   */
+  const resetDemo = useCallback(() => {
+    setSelectedId(null)
+    server.reset()
+    bus.clear()
+    bus.beginFlow("First load", "system")
+    setResetKey((n) => n + 1)
+  }, [bus, server])
+
+  /**
    * The server is a plain object rather than React state, so retuning it is a
    * direct call. Mirroring the values into state as well is only so the sliders
    * have something to render.
@@ -161,6 +187,14 @@ export function useTanstackShowcase() {
       setStatus: (id, status) => {
         bus.beginFlow(`Set #${id} → ${status}`)
         view.setStatus(id, status)
+      },
+      rename: (id, title) => {
+        bus.beginFlow(`Rename #${id}`)
+        view.rename(id, title)
+      },
+      setBody: (id, body) => {
+        bus.beginFlow(`Edit body #${id}`)
+        view.setBody(id, body)
       },
       remove: async (id) => {
         bus.beginFlow(`Delete #${id}`)
@@ -199,6 +233,8 @@ export function useTanstackShowcase() {
     timeline,
     architecture,
     clearLog: () => bus.clear(),
+    resetDemo,
+    resetKey,
     railOffset,
     latestEvent: flows.at(-1)?.events.at(-1),
     attachFlows,

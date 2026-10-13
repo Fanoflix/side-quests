@@ -53,6 +53,11 @@ function countingServer({ failWrites = false } = {}) {
       if (failWrites) throw new Error("server rejected the write")
       return { ...TICKETS.find((t) => t.id === id)!, status }
     },
+    renameTicket: async (id: number, title: string) => {
+      calls.writes += 1
+      if (failWrites) throw new Error("server rejected the write")
+      return { ...TICKETS.find((t) => t.id === id)!, title }
+    },
     deleteTicket: async () => {
       calls.writes += 1
       if (failWrites) throw new Error("server rejected the write")
@@ -298,6 +303,37 @@ describe("rung 2 — TanStack DB", () => {
       expect(view.current!.list.find((t) => t.id === 1)?.status).toBe(before)
     )
   })
+
+  it("renames a ticket optimistically", async () => {
+    const { calls, server } = countingServer()
+    const view = captureView()
+    renderRung(2, server, null, false, view.capture)
+    await expectListSize(2)
+
+    act(() => view.current!.rename(1, "Renamed"))
+
+    // Same guarantee as the status write: the new title is on screen in the
+    // same tick, before any server round-trip has finished.
+    expect(view.current!.list.find((t) => t.id === 1)?.title).toBe("Renamed")
+
+    await settle()
+    expect(calls.writes).toBe(1)
+  })
+
+  it("rolls a rename back when the server rejects it", async () => {
+    const { server } = countingServer({ failWrites: true })
+    const view = captureView()
+    renderRung(2, server, null, false, view.capture)
+    await expectListSize(2)
+
+    const before = view.current!.list.find((t) => t.id === 1)?.title
+    act(() => view.current!.rename(1, "Renamed"))
+    expect(view.current!.list.find((t) => t.id === 1)?.title).toBe("Renamed")
+
+    await vi.waitFor(() =>
+      expect(view.current!.list.find((t) => t.id === 1)?.title).toBe(before)
+    )
+  })
 })
 
 describe("rung 2 instrumentation", () => {
@@ -348,6 +384,7 @@ function slowServer(ms = 80) {
       }),
     createTicket: async () => TICKETS[0],
     setStatus: async () => TICKETS[0],
+    renameTicket: async () => TICKETS[0],
     deleteTicket: async () => {},
   }
   return { aborted, server: server as unknown as Server }
