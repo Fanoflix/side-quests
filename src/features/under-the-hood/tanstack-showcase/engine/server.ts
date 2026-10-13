@@ -340,11 +340,7 @@ export function createServer(bus: EventBus, config: ServerConfig) {
         true
       ),
 
-    renameTicket: (
-      id: number,
-      title: string,
-      trace = `PATCH /tickets/${id}`
-    ) =>
+    renameTicket: (id: number, title: string, trace = `PATCH /tickets/${id}`) =>
       handle(
         `PATCH /tickets/${id}`,
         trace,

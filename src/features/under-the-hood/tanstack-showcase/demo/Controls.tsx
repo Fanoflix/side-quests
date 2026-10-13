@@ -103,7 +103,9 @@ export function Controls({
               </Button>
             }
           />
-          <TooltipContent>Reset this demo to its starting state.</TooltipContent>
+          <TooltipContent>
+            Reset this demo to its starting state.
+          </TooltipContent>
         </Tooltip>
 
         <p
