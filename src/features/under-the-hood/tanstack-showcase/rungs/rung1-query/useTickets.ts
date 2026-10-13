@@ -110,6 +110,17 @@ export function useQueryTickets({
     },
   })
 
+  const bodyMutation = useMutation({
+    mutationFn: ({ id, body }: { id: number; body: string[] }) =>
+      server.setBody(id, body),
+    // The row's `preview` is cut server-side from the body's first line, so a
+    // body edit changes the inbox row as well as the ticket.
+    onSuccess: (_result, { id }) => {
+      void invalidateList()
+      void invalidateTicket(id)
+    },
+  })
+
   const removeMutation = useMutation({
     mutationFn: (id: number) => server.deleteTicket(id),
     onSuccess: (_result, id) => {
@@ -144,6 +155,14 @@ export function useQueryTickets({
     [bus, renameMutation]
   )
 
+  const setBody = useCallback(
+    (id: number, body: string[]) => {
+      bus.emit("ui:interaction", `edit body #${id}`)
+      bodyMutation.mutate({ id, body })
+    },
+    [bus, bodyMutation]
+  )
+
   const remove = useCallback(
     async (id: number) => {
       bus.emit("ui:interaction", `delete #${id}`)
@@ -156,6 +175,7 @@ export function useQueryTickets({
     createMutation.error ??
     statusMutation.error ??
     renameMutation.error ??
+    bodyMutation.error ??
     removeMutation.error
 
   const list = listQuery.data ?? []
@@ -172,11 +192,13 @@ export function useQueryTickets({
       createMutation.isPending ||
       statusMutation.isPending ||
       renameMutation.isPending ||
+      bodyMutation.isPending ||
       removeMutation.isPending,
     error: writeError instanceof Error ? writeError.message : null,
     create,
     setStatus,
     rename,
+    setBody,
     remove,
   }
 }

@@ -1,11 +1,11 @@
 import { useCallback } from "react"
 import { eq, useLiveQuery } from "@tanstack/react-db"
-import { useQuery } from "@tanstack/react-query"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 
 import type { Server } from "../../engine/server"
 
 import type { EventBus } from "../../engine/events"
-import type { TicketStatus } from "../../engine/types"
+import type { Ticket, TicketStatus } from "../../engine/types"
 import type { LoadState, TicketsView } from "../contract"
 import type { TicketCollection } from "./collection"
 import { TICKETS_KEY } from "./collection"
@@ -62,6 +62,8 @@ export function useDbTickets({
   bus: EventBus
   selectedId: number | null
 }): TicketsView {
+  const queryClient = useQueryClient()
+
   // A live query, not a fetch: it recomputes locally whenever the rows beneath
   // it change, including from an optimistic write that hasn't reached the
   // server yet.
@@ -185,6 +187,47 @@ export function useDbTickets({
     [bus, collection, write]
   )
 
+  /**
+   * Body edits don't go through the collection — the row doesn't carry a body,
+   * only a preview the server cuts. So this write is a plain Query mutation
+   * over the detail cache, with the collection poked afterwards so the new
+   * preview catches up in the inbox row.
+   *
+   * The optimistic update is on the detail cache: the paragraphs change in the
+   * same tick as the keystroke that committed them, and if the server refuses
+   * `onError` rolls the cache back to the snapshot it took on `onMutate`.
+   */
+  const bodyMutation = useMutation({
+    mutationFn: ({ id, body }: { id: number; body: string[] }) =>
+      server.setBody(id, body),
+    onMutate: ({ id, body }) => {
+      const detailKey = ticketKeys.detail(id)
+      const previous = queryClient.getQueryData<Ticket>(detailKey)
+      bus.emit("db:optimistic:apply", `edit body #${id}`, TRACE)
+      queryClient.setQueryData<Ticket | undefined>(detailKey, (current) =>
+        current ? { ...current, body } : current
+      )
+      return { previous, detailKey }
+    },
+    onError: (_err, _vars, context) => {
+      if (!context) return
+      bus.emit("db:optimistic:rollback", "edit body", TRACE)
+      queryClient.setQueryData(context.detailKey, context.previous)
+    },
+    onSuccess: (_result, { id }) => {
+      void queryClient.invalidateQueries({ queryKey: ticketKeys.list() })
+      void queryClient.invalidateQueries({ queryKey: ticketKeys.detail(id) })
+    },
+  })
+
+  const setBody = useCallback(
+    (id: number, body: string[]) => {
+      bus.emit("ui:interaction", `edit body #${id}`)
+      bodyMutation.mutate({ id, body })
+    },
+    [bodyMutation, bus]
+  )
+
   const remove = useCallback(
     async (id: number) => {
       bus.emit("ui:interaction", `delete #${id}`)
@@ -209,6 +252,7 @@ export function useDbTickets({
     create,
     setStatus,
     rename,
+    setBody,
     remove,
   }
 }

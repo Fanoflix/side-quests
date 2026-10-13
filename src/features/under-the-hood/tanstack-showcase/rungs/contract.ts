@@ -41,6 +41,12 @@ export type TicketsView = {
   setStatus: (id: number, status: TicketStatus) => void
   rename: (id: number, title: string) => void
   /**
+   * Replace a ticket's body paragraphs. Lives on the detail, not the summary —
+   * at rung 2 that means it goes through the Query cache rather than the
+   * collection, because the row doesn't carry a body.
+   */
+  setBody: (id: number, body: string[]) => void
+  /**
    * Resolves once the server has accepted the delete, rejects if it refuses.
    *
    * Awaitable where the others aren't because the caller has a decision to make
