@@ -28,6 +28,14 @@ const KEYFRAME_ROOT = path.join(os.tmpdir(), "webfun-reel")
 // 16:9 at a size that keeps a 20-second clip in the low megabytes.
 const VIEWPORT = { width: 1280, height: 720 }
 
+/**
+ * Output framerate. 32 is slightly above the common 30 — enough extra motion
+ * data that CSS transitions and the odometer-flow roll read smoothly without
+ * ballooning the file. Playwright's internal screencast captures at ~25,
+ * so ffmpeg duplicates frames to match (see `encodeMp4`).
+ */
+const OUTPUT_FPS = 32
+
 type Tool = { route: string; run: (page: Page) => Promise<void> }
 
 const TOOLS: Record<string, Tool> = {
@@ -53,18 +61,27 @@ function parseArgs(argv: string[]) {
 
   if (!target || (target !== "all" && !(target in TOOLS))) {
     console.error(
-      `usage: yarn record-reel <slug|all> [--format=gif|webm]\n` +
+      `usage: yarn record-reel <slug|all> [--format=mp4|webm|gif]\n` +
         `slugs: ${Object.keys(TOOLS).join(", ")}`
     )
     process.exit(1)
   }
-  if (format !== undefined && format !== "gif" && format !== "webm") {
+  if (
+    format !== undefined &&
+    format !== "mp4" &&
+    format !== "webm" &&
+    format !== "gif"
+  ) {
     console.error(`unknown --format: ${format}`)
     process.exit(1)
   }
 
   const slugs = target === "all" ? Object.keys(TOOLS) : [target]
-  return { slugs, gif: format === "gif" }
+  // MP4 is the default: H.264 is the only codec the whole web plays reliably
+  // (Playwright's VP9 WebM hangs in some embedded Chrome contexts). WebM
+  // stays on offer for size-conscious cases where VP9 is known to work.
+  const outputFormat = format ?? "mp4"
+  return { slugs, outputFormat }
 }
 
 async function isServerUp() {
@@ -136,6 +153,43 @@ async function recordTool(slug: string, { route, run }: Tool) {
   await copyFile(recording, webm)
   await rm(videoDir, { recursive: true, force: true })
   return webm
+}
+
+/**
+ * Re-encode the Playwright WebM to H.264 MP4 at `OUTPUT_FPS`. ffmpeg
+ * duplicates frames to pad the 25fps source up to 32fps — not new motion
+ * data, but the file carries the higher rate so players don't downsample.
+ * `yuv420p` and `+faststart` are what every embedded video player wants.
+ */
+async function encodeMp4(webm: string) {
+  const ffmpeg = binaryPath("ffmpeg")
+  if (!ffmpeg) {
+    console.warn("ffmpeg not installed — keeping WebM; `brew install ffmpeg`")
+    return null
+  }
+  const mp4 = webm.replace(/\.webm$/, ".mp4")
+  const ok = runBinary(ffmpeg, [
+    "-y",
+    "-loglevel",
+    "error",
+    "-i",
+    webm,
+    "-c:v",
+    "libx264",
+    "-preset",
+    "slow",
+    "-crf",
+    "23",
+    "-pix_fmt",
+    "yuv420p",
+    "-r",
+    String(OUTPUT_FPS),
+    "-movflags",
+    "+faststart",
+    "-an",
+    mp4,
+  ])
+  return ok ? mp4 : null
 }
 
 function binaryPath(name: string) {
@@ -210,7 +264,7 @@ async function reportSize(file: string) {
 }
 
 async function main() {
-  const { slugs, gif } = parseArgs(process.argv.slice(2))
+  const { slugs, outputFormat } = parseArgs(process.argv.slice(2))
   const stopServer = await ensureDevServer()
   process.on("SIGINT", () => {
     stopServer()
@@ -222,10 +276,19 @@ async function main() {
       console.log(`recording ${slug}…`)
       const webm = await recordTool(slug, TOOLS[slug])
       await reportSize(webm)
-      if (gif) {
+
+      if (outputFormat === "mp4") {
+        const mp4 = await encodeMp4(webm)
+        if (mp4) {
+          await reportSize(mp4)
+          // The WebM is a working-copy; MP4 is what the sheet reads.
+          await rm(webm)
+        }
+      } else if (outputFormat === "gif") {
         const made = await convertToGif(webm)
         if (made) await reportSize(made)
       }
+
       console.log(`  keyframes in ${path.join(KEYFRAME_ROOT, slug)}`)
     }
   } finally {

@@ -43,7 +43,7 @@ export const reelItems: ReelItem[] = [
     icon: Grip,
     beat: "dots become a photo",
     line: "Zoom out from a field of black-and-white dots and the pattern resolves into a greyscale photograph your eye has blended on its own.",
-    clip: "dithering.gif",
+    clip: "dithering.mp4",
   },
   {
     title: "Anti-aliasing",
@@ -67,7 +67,7 @@ export const reelItems: ReelItem[] = [
     icon: Type,
     beat: "odometer-rolling letters",
     line: "Letters shared between two words slide across in place while the unmatched ones roll in like an odometer — a digit that changed more travels visibly faster in the same time.",
-    clip: "character-flow.gif",
+    clip: "character-flow.mp4",
   },
   {
     title: "Style Flow",
