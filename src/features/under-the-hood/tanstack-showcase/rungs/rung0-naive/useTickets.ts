@@ -137,6 +137,14 @@ export function useNaiveTickets({
     [bus, runWrite, server]
   )
 
+  const setBody = useCallback(
+    (id: number, body: string[]) => {
+      bus.emit("ui:interaction", `edit body #${id}`)
+      void runWrite(() => server.setBody(id, body)).catch(() => {})
+    },
+    [bus, runWrite, server]
+  )
+
   const remove = useCallback(
     async (id: number) => {
       bus.emit("ui:interaction", `delete #${id}`)
@@ -167,6 +175,7 @@ export function useNaiveTickets({
     create,
     setStatus,
     rename,
+    setBody,
     remove,
   }
 }

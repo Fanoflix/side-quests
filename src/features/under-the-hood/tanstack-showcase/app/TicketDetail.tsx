@@ -20,6 +20,7 @@ import type { LoadState } from "../rungs/contract"
 import type { Ticket, TicketStatus, TicketSummary } from "../engine/types"
 import { TicketComments } from "./TicketComments"
 import { AssigneeAvatar, STATUS_LABEL, StatusDot } from "./TicketMeta"
+import { BodyField } from "./BodyField"
 import { TitleField } from "./TitleField"
 import { displayName } from "./people"
 
@@ -55,6 +56,7 @@ export function TicketDetail({
   isMutating,
   onStatus,
   onRename,
+  onEditBody,
   onDelete,
   onBack,
 }: {
@@ -64,6 +66,7 @@ export function TicketDetail({
   isMutating: boolean
   onStatus: (id: number, status: TicketStatus) => void
   onRename: (id: number, title: string) => void
+  onEditBody: (id: number, body: string[]) => void
   onDelete: (id: number) => void
   /** Back to the inbox. Only shown where the two take turns. */
   onBack: () => void
@@ -125,12 +128,12 @@ export function TicketDetail({
         onBack={onBack}
       />
       <BodyArea>
-        <div className={cn(BODY_MIN_H, "space-y-3")}>
-          {ticket.body.map((line, i) => (
-            <p key={i} className="text-sm leading-relaxed text-pretty">
-              {line}
-            </p>
-          ))}
+        <div className={BODY_MIN_H}>
+          <BodyField
+            value={ticket.body}
+            onEdit={(next) => onEditBody(ticket.id, next)}
+            isMutating={isMutating}
+          />
         </div>
         <TicketComments comments={ticket.comments} />
       </BodyArea>

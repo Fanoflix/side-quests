@@ -192,6 +192,10 @@ export function useTanstackShowcase() {
         bus.beginFlow(`Rename #${id}`)
         view.rename(id, title)
       },
+      setBody: (id, body) => {
+        bus.beginFlow(`Edit body #${id}`)
+        view.setBody(id, body)
+      },
       remove: async (id) => {
         bus.beginFlow(`Delete #${id}`)
         // Work out the neighbour *now*, while the row is still in the list and
