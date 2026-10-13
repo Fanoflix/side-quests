@@ -352,11 +352,7 @@ export function createServer(bus: EventBus, config: ServerConfig) {
         true
       ),
 
-    setBody: (
-      id: number,
-      body: string[],
-      trace = `PATCH /tickets/${id}`
-    ) =>
+    setBody: (id: number, body: string[], trace = `PATCH /tickets/${id}`) =>
       handle(
         `PATCH /tickets/${id}`,
         trace,

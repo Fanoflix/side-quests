@@ -36,15 +36,8 @@ export function BodyField({
   onEdit: (next: string[]) => void
   isMutating: boolean
 }) {
-  const {
-    isEditing,
-    draft,
-    start,
-    commit,
-    onChange,
-    onKeyDown,
-    bindTextarea,
-  } = useEditableBody({ value, onCommit: onEdit })
+  const { isEditing, draft, start, commit, onChange, onKeyDown, bindTextarea } =
+    useEditableBody({ value, onCommit: onEdit })
 
   if (isEditing) {
     return (
