@@ -52,6 +52,22 @@ export function createTicketCollection({
     }
   }
 
+  /**
+   * One endpoint per editable field.
+   *
+   * Each update mutation names the keys it actually touched; this maps each one
+   * to the server call that persists it. Keeping it a map rather than an
+   * if-chain means a new field is one row, not a new branch — and the demo's
+   * right-hand timeline keeps showing a dedicated `PATCH /tickets/N` per edit,
+   * which is the real backend shape we're pretending to be.
+   */
+  const fieldEndpoints: {
+    [K in "status" | "title"]: (ticket: TicketSummary) => Promise<unknown>
+  } = {
+    status: (ticket) => server.setStatus(ticket.id, ticket.status, TRACE),
+    title: (ticket) => server.renameTicket(ticket.id, ticket.title, TRACE),
+  }
+
   return createCollection(
     queryCollectionOptions<TicketSummary>({
       queryClient,
@@ -71,9 +87,23 @@ export function createTicketCollection({
       onUpdate: async ({ transaction }) => {
         for (const mutation of transaction.mutations) {
           const ticket = mutation.modified
-          await push(`update #${ticket.id}`, () =>
-            server.setStatus(ticket.id, ticket.status, TRACE)
-          )
+          for (const key of Object.keys(mutation.changes)) {
+            const send = (
+              fieldEndpoints as Record<
+                string,
+                ((ticket: TicketSummary) => Promise<unknown>) | undefined
+              >
+            )[key]
+            // A changed field with no endpoint would mean the collection stored
+            // something the server doesn't persist. That can't happen with the
+            // fields in the schema today, but flagging it is cheaper than a
+            // silent drop if the shape ever drifts.
+            if (!send) {
+              console.error(`[rung2] no endpoint for field "${key}"`)
+              continue
+            }
+            await push(`update #${ticket.id} (${key})`, () => send(ticket))
+          }
         }
       },
 

@@ -39,6 +39,7 @@ export type TicketsView = {
   error: string | null
   create: (title: string, assignee: string) => void
   setStatus: (id: number, status: TicketStatus) => void
+  rename: (id: number, title: string) => void
   /**
    * Resolves once the server has accepted the delete, rejects if it refuses.
    *

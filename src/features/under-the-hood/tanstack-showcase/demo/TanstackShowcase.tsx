@@ -37,6 +37,8 @@ export function TanstackShowcase() {
     timeline,
     architecture,
     clearLog,
+    resetDemo,
+    resetKey,
     railOffset,
     latestEvent,
     attachFlows,
@@ -70,12 +72,17 @@ export function TanstackShowcase() {
         onRung={setRung}
         serverConfig={serverConfig}
         onServerConfig={updateServerConfig}
+        onReset={resetDemo}
       />
 
       <div className="relative flex min-h-0 flex-1 flex-col">
         <SwitchBlur active={switchingTo !== null}>
           <div className={cn(SHELL, "w-full")}>
             <RungHost
+              // Including `resetKey` here is what makes "reset" tear the data
+              // layer down and start cold without changing rungs: a new key
+              // unmounts the current host and remounts a fresh one.
+              key={`${rung}:${resetKey}`}
               rung={rung}
               server={server}
               bus={bus}

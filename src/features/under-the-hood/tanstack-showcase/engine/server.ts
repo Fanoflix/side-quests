@@ -340,6 +340,22 @@ export function createServer(bus: EventBus, config: ServerConfig) {
         true
       ),
 
+    renameTicket: (
+      id: number,
+      title: string,
+      trace = `PATCH /tickets/${id}`
+    ) =>
+      handle(
+        `PATCH /tickets/${id}`,
+        trace,
+        () => {
+          rows = rows.map((t) => (t.id === id ? { ...t, title } : t))
+          const updated = rows.find((t) => t.id === id)!
+          return summarise(updated)
+        },
+        true
+      ),
+
     deleteTicket: (id: number, trace = `DELETE /tickets/${id}`) =>
       handle(
         `DELETE /tickets/${id}`,

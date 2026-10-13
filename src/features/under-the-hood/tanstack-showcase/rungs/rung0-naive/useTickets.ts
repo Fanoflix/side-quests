@@ -129,6 +129,14 @@ export function useNaiveTickets({
     [bus, runWrite, server]
   )
 
+  const rename = useCallback(
+    (id: number, title: string) => {
+      bus.emit("ui:interaction", `rename #${id}`)
+      void runWrite(() => server.renameTicket(id, title)).catch(() => {})
+    },
+    [bus, runWrite, server]
+  )
+
   const remove = useCallback(
     async (id: number) => {
       bus.emit("ui:interaction", `delete #${id}`)
@@ -158,6 +166,7 @@ export function useNaiveTickets({
     error,
     create,
     setStatus,
+    rename,
     remove,
   }
 }

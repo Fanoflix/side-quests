@@ -21,11 +21,17 @@ const TRACE = JSON.stringify(TICKETS_KEY)
 
 /**
  * Ids for rows that exist only optimistically, until the server assigns a real
- * one. Negative and counting down, so they can never collide with a server id
- * and never depend on the clock — the demo has to behave the same on every run.
+ * one.
+ *
+ * Monotonically decreasing starting at `Number.MAX_SAFE_INTEGER`, so an
+ * optimistic row sorts above every realistic server id under the live
+ * query's `id DESC` ordering — the row stays at the top of the inbox from
+ * the moment it is filed through to when the server replaces its id with a
+ * real one. Still deterministic and still collision-free with any id the
+ * server will ever assign.
  */
-let nextTempId = 0
-const tempId = () => --nextTempId
+let nextTempId = Number.MAX_SAFE_INTEGER
+const tempId = () => nextTempId--
 
 /**
  * Rung 2 — the same app again, with a TanStack DB collection over rung 1's Query.
@@ -59,7 +65,16 @@ export function useDbTickets({
   // A live query, not a fetch: it recomputes locally whenever the rows beneath
   // it change, including from an optimistic write that hasn't reached the
   // server yet.
-  const list = useLiveQuery((q) => q.from({ ticket: collection }))
+  //
+  // The explicit `orderBy` is what keeps a just-created ticket from jumping
+  // down the list after the server round-trip. Collection reconciliation
+  // appends new synced rows to the Map, which otherwise shows the row at the
+  // top (optimistic) and then the bottom (synced). An `id desc` sort pins both
+  // positions to the top — temp ids are seeded high (see `tempId()`) and real
+  // ids monotonically increase, so each newly filed row stays newest.
+  const list = useLiveQuery((q) =>
+    q.from({ ticket: collection }).orderBy(({ ticket }) => ticket.id, "desc")
+  )
 
   // The selected row, read locally. It carries the header — title, status,
   // assignee — which is why the detail pane has something to draw the moment
@@ -158,6 +173,18 @@ export function useDbTickets({
     [bus, collection, write]
   )
 
+  const rename = useCallback(
+    (id: number, title: string) => {
+      bus.emit("ui:interaction", `rename #${id}`)
+      write(`update #${id}`, () =>
+        collection.update(id, (draft) => {
+          draft.title = title
+        })
+      )
+    },
+    [bus, collection, write]
+  )
+
   const remove = useCallback(
     async (id: number) => {
       bus.emit("ui:interaction", `delete #${id}`)
@@ -181,6 +208,7 @@ export function useDbTickets({
     error: null,
     create,
     setStatus,
+    rename,
     remove,
   }
 }

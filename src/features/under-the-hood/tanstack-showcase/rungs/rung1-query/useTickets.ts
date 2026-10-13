@@ -100,6 +100,16 @@ export function useQueryTickets({
     },
   })
 
+  const renameMutation = useMutation({
+    mutationFn: ({ id, title }: { id: number; title: string }) =>
+      server.renameTicket(id, title),
+    // Same two caches as a status write: the row in the list and this ticket.
+    onSuccess: (_result, { id }) => {
+      void invalidateList()
+      void invalidateTicket(id)
+    },
+  })
+
   const removeMutation = useMutation({
     mutationFn: (id: number) => server.deleteTicket(id),
     onSuccess: (_result, id) => {
@@ -126,6 +136,14 @@ export function useQueryTickets({
     [bus, statusMutation]
   )
 
+  const rename = useCallback(
+    (id: number, title: string) => {
+      bus.emit("ui:interaction", `rename #${id}`)
+      renameMutation.mutate({ id, title })
+    },
+    [bus, renameMutation]
+  )
+
   const remove = useCallback(
     async (id: number) => {
       bus.emit("ui:interaction", `delete #${id}`)
@@ -135,7 +153,10 @@ export function useQueryTickets({
   )
 
   const writeError =
-    createMutation.error ?? statusMutation.error ?? removeMutation.error
+    createMutation.error ??
+    statusMutation.error ??
+    renameMutation.error ??
+    removeMutation.error
 
   const list = listQuery.data ?? []
 
@@ -150,10 +171,12 @@ export function useQueryTickets({
     isMutating:
       createMutation.isPending ||
       statusMutation.isPending ||
+      renameMutation.isPending ||
       removeMutation.isPending,
     error: writeError instanceof Error ? writeError.message : null,
     create,
     setStatus,
+    rename,
     remove,
   }
 }
