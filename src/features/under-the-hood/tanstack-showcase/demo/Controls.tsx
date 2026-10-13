@@ -88,10 +88,14 @@ export function Controls({
         <Tooltip>
           <TooltipTrigger
             render={
+              // Styled `destructive` because the reset is a wipe — not a
+              // mistake we should let the reader click through without a
+              // second's hesitation. The red tint is the only chrome tell
+              // that this control throws the demo's state away.
               <Button
                 size="sm"
-                variant="ghost"
-                className="h-7 gap-1.5 px-2 text-xs text-muted-foreground"
+                variant="destructive"
+                className="h-7 gap-1.5 px-2 text-xs"
                 onClick={onReset}
               >
                 <RotateCcw className="size-3.5" />
