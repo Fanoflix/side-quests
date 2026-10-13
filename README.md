@@ -22,7 +22,7 @@ rewinding.
 Zoom out from a field of black-and-white dots and the pattern resolves into a
 full greyscale photograph your eye has blended on its own.
 
-<!-- ![Dithering reel](public/reel/dithering.gif) -->
+![Dithering reel](public/reel/dithering.gif)
 
 ### Anti-aliasing — _staircase melts smooth_
 
@@ -44,7 +44,7 @@ Letters shared between two words slide across in place while the unmatched ones
 roll in like an odometer — a digit that changed more travels visibly faster in
 the same time.
 
-<!-- ![Character Flow reel](public/reel/character-flow.gif) -->
+![Character Flow reel](public/reel/character-flow.gif)
 
 ### Style Flow — _one word, breathing_
 
