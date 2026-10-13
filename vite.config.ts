@@ -36,6 +36,7 @@ const PRERENDERED_PATHS = [
   "/future-table",
   "/concept-chat",
   "/tanstack-showcase",
+  "/reel",
 ]
 
 const config = defineConfig(({ command }) => ({

@@ -1,5 +1,6 @@
 import type { LucideIcon } from "lucide-react"
 import {
+  Film,
   Grip,
   MessagesSquare,
   MonitorPlay,
@@ -203,6 +204,19 @@ export const navGroups: NavGroup[] = [
           "data fetching",
           "state management",
         ],
+      },
+    ],
+  },
+  {
+    label: "The reel",
+    items: [
+      {
+        title: "The reel",
+        to: "/reel",
+        blurb:
+          "A twenty-second clip from each tool. See the whole site in two minutes.",
+        icon: Film,
+        keywords: ["reel", "trailer", "demo", "gif", "showreel"],
       },
     ],
   },

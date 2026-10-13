@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TanstackShowcaseRouteImport } from './routes/tanstack-showcase'
 import { Route as StyleFlowRouteImport } from './routes/style-flow'
+import { Route as ReelRouteImport } from './routes/reel'
 import { Route as LowResVideoRouteImport } from './routes/low-res-video'
 import { Route as FutureTableRouteImport } from './routes/future-table'
 import { Route as DitheringRouteImport } from './routes/dithering'
@@ -27,6 +28,11 @@ const TanstackShowcaseRoute = TanstackShowcaseRouteImport.update({
 const StyleFlowRoute = StyleFlowRouteImport.update({
   id: '/style-flow',
   path: '/style-flow',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ReelRoute = ReelRouteImport.update({
+  id: '/reel',
+  path: '/reel',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LowResVideoRoute = LowResVideoRouteImport.update({
@@ -73,6 +79,7 @@ export interface FileRoutesByFullPath {
   '/dithering': typeof DitheringRoute
   '/future-table': typeof FutureTableRoute
   '/low-res-video': typeof LowResVideoRoute
+  '/reel': typeof ReelRoute
   '/style-flow': typeof StyleFlowRoute
   '/tanstack-showcase': typeof TanstackShowcaseRoute
 }
@@ -84,6 +91,7 @@ export interface FileRoutesByTo {
   '/dithering': typeof DitheringRoute
   '/future-table': typeof FutureTableRoute
   '/low-res-video': typeof LowResVideoRoute
+  '/reel': typeof ReelRoute
   '/style-flow': typeof StyleFlowRoute
   '/tanstack-showcase': typeof TanstackShowcaseRoute
 }
@@ -96,6 +104,7 @@ export interface FileRoutesById {
   '/dithering': typeof DitheringRoute
   '/future-table': typeof FutureTableRoute
   '/low-res-video': typeof LowResVideoRoute
+  '/reel': typeof ReelRoute
   '/style-flow': typeof StyleFlowRoute
   '/tanstack-showcase': typeof TanstackShowcaseRoute
 }
@@ -109,6 +118,7 @@ export interface FileRouteTypes {
     | '/dithering'
     | '/future-table'
     | '/low-res-video'
+    | '/reel'
     | '/style-flow'
     | '/tanstack-showcase'
   fileRoutesByTo: FileRoutesByTo
@@ -120,6 +130,7 @@ export interface FileRouteTypes {
     | '/dithering'
     | '/future-table'
     | '/low-res-video'
+    | '/reel'
     | '/style-flow'
     | '/tanstack-showcase'
   id:
@@ -131,6 +142,7 @@ export interface FileRouteTypes {
     | '/dithering'
     | '/future-table'
     | '/low-res-video'
+    | '/reel'
     | '/style-flow'
     | '/tanstack-showcase'
   fileRoutesById: FileRoutesById
@@ -143,6 +155,7 @@ export interface RootRouteChildren {
   DitheringRoute: typeof DitheringRoute
   FutureTableRoute: typeof FutureTableRoute
   LowResVideoRoute: typeof LowResVideoRoute
+  ReelRoute: typeof ReelRoute
   StyleFlowRoute: typeof StyleFlowRoute
   TanstackShowcaseRoute: typeof TanstackShowcaseRoute
 }
@@ -161,6 +174,13 @@ declare module '@tanstack/react-router' {
       path: '/style-flow'
       fullPath: '/style-flow'
       preLoaderRoute: typeof StyleFlowRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reel': {
+      id: '/reel'
+      path: '/reel'
+      fullPath: '/reel'
+      preLoaderRoute: typeof ReelRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/low-res-video': {
@@ -223,6 +243,7 @@ const rootRouteChildren: RootRouteChildren = {
   DitheringRoute: DitheringRoute,
   FutureTableRoute: FutureTableRoute,
   LowResVideoRoute: LowResVideoRoute,
+  ReelRoute: ReelRoute,
   StyleFlowRoute: StyleFlowRoute,
   TanstackShowcaseRoute: TanstackShowcaseRoute,
 }
