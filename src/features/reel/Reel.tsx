@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { Film } from "lucide-react"
 import { Link } from "@tanstack/react-router"
 
@@ -102,7 +102,7 @@ function ReelTile({ item }: { item: ReelItem }) {
         </Link>
       </header>
 
-      <ReelFrame src={asset(`reel/${item.gif}`)} alt={item.title} />
+      <ReelFrame src={asset(`reel/${item.clip}`)} alt={item.title} />
 
       <p className="text-xs tracking-widest text-muted-foreground uppercase">
         {item.beat}
@@ -115,22 +115,34 @@ function ReelTile({ item }: { item: ReelItem }) {
 }
 
 /**
- * The GIF frame.
+ * The clip frame.
  *
- * Falls through to a placeholder when the file is missing, so the sheet reads
- * cleanly while the clips are still being captured. A plain `<img>` is fine
- * for the sizes we ship — a video element would buy nothing and would need
- * controls, autoplay and codec plumbing.
+ * Picks `<video>` for `.webm` / `.mp4` and `<img>` for `.gif`, so the sheet
+ * can hold both — the recorder writes WebM, the older captures are GIFs.
+ * Video loops muted autoplay with `playsInline`, which Chrome, Safari and
+ * Firefox all permit without a user gesture; a muted autoplay is why the
+ * clips start the moment the sheet opens. Falls through to a placeholder
+ * when the file is missing, so the tiles read cleanly while clips are still
+ * being captured.
  */
 function ReelFrame({ src, alt }: { src: string; alt: string }) {
   const [failed, setFailed] = useState(false)
+  const isVideo = /\.(webm|mp4)$/i.test(src)
 
-  return (
-    <div className="relative aspect-video w-full overflow-hidden rounded-md border border-border bg-muted/30">
-      {failed ? (
+  if (failed) {
+    return (
+      <div className="relative aspect-video w-full overflow-hidden rounded-md border border-border bg-muted/30">
         <div className="flex h-full w-full items-center justify-center text-xs tracking-widest text-muted-foreground uppercase">
           Clip pending
         </div>
+      </div>
+    )
+  }
+
+  return (
+    <div className="relative aspect-video w-full overflow-hidden rounded-md border border-border bg-muted/30">
+      {isVideo ? (
+        <LazyVideo src={src} alt={alt} onFail={() => setFailed(true)} />
       ) : (
         <img
           src={src}
@@ -141,5 +153,64 @@ function ReelFrame({ src, alt }: { src: string; alt: string }) {
         />
       )}
     </div>
+  )
+}
+
+/**
+ * A video that only loads and plays while it's on screen. Mounting every clip
+ * with `autoplay` at once overwhelms Chrome's media stack with eight
+ * concurrent WebM decodes — the sheet freezes before any one of them paints.
+ * An IntersectionObserver gates both `load()` and `play()` on visibility and
+ * pauses the clip when it scrolls off, so there's at most one or two active
+ * decoders at a time regardless of how many tiles exist.
+ */
+function LazyVideo({
+  src,
+  alt,
+  onFail,
+}: {
+  src: string
+  alt: string
+  onFail: () => void
+}) {
+  const videoRef = useRef<HTMLVideoElement | null>(null)
+
+  useEffect(() => {
+    const video = videoRef.current
+    if (!video) return
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            if (video.preload !== "auto") video.preload = "auto"
+            video.play().catch(() => {
+              // Autoplay refused (muted autoplay should work in Chrome/Safari/
+              // Firefox; if the browser still blocks it, leave the frame
+              // paused rather than throw into the user's console).
+            })
+          } else {
+            video.pause()
+          }
+        }
+      },
+      { threshold: 0.4 }
+    )
+    observer.observe(video)
+    return () => observer.disconnect()
+  }, [])
+
+  return (
+    <video
+      ref={videoRef}
+      src={src}
+      aria-label={alt}
+      loop
+      muted
+      playsInline
+      preload="none"
+      className="h-full w-full object-cover"
+      onError={onFail}
+    />
   )
 }

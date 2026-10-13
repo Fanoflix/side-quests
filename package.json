@@ -11,6 +11,7 @@
     "test": "vitest run",
     "lint": "eslint",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx}\"",
+    "record-reel": "tsx scripts/record-reel.ts",
     "check": "prettier --check \"**/*.{ts,tsx,js,jsx}\"",
     "typecheck": "tsc --noEmit"
   },
@@ -56,8 +57,10 @@
     "@vitejs/plugin-react": "^6",
     "eslint": "^9",
     "jsdom": "^28",
+    "playwright": "^1.64.0",
     "prettier": "^3.8.3",
     "prettier-plugin-tailwindcss": "^0.8.0",
+    "tsx": "^4.23.15",
     "typescript": "^6",
     "vite": "^8",
     "vitest": "^4"

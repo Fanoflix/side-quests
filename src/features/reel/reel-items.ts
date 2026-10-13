@@ -27,8 +27,13 @@ export type ReelItem = {
   beat: string
   /** One-sentence tease, the hook under the clip. */
   line: string
-  /** Filename inside `public/reel/`, including extension. */
-  gif: string
+  /**
+   * Filename inside `public/reel/`, including extension. `.webm` and `.mp4`
+   * render as inline-playing video; `.gif` renders as an image. The recorder
+   * (`scripts/record-reel.ts`) produces WebM by default; a GIF export only
+   * exists when ffmpeg or gifski is installed on the host.
+   */
+  clip: string
 }
 
 export const reelItems: ReelItem[] = [
@@ -38,7 +43,7 @@ export const reelItems: ReelItem[] = [
     icon: Grip,
     beat: "dots become a photo",
     line: "Zoom out from a field of black-and-white dots and the pattern resolves into a greyscale photograph your eye has blended on its own.",
-    gif: "dithering.gif",
+    clip: "dithering.gif",
   },
   {
     title: "Anti-aliasing",
@@ -46,7 +51,7 @@ export const reelItems: ReelItem[] = [
     icon: Spline,
     beat: "staircase melts smooth",
     line: "Slide the Samples lever from 1 to 8 and a jagged diagonal staircase melts into a clean straight edge the screen never actually drew.",
-    gif: "anti-aliasing.gif",
+    clip: "anti-aliasing.webm",
   },
   {
     title: "Low Res Video",
@@ -54,7 +59,7 @@ export const reelItems: ReelItem[] = [
     icon: MonitorPlay,
     beat: "dot field becomes video",
     line: "Pull back on a few hundred coloured dots on black and the field resolves into a moving picture; then flick the dot shape from circle to diamond.",
-    gif: "low-res-video.gif",
+    clip: "low-res-video.webm",
   },
   {
     title: "Character Flow",
@@ -62,7 +67,7 @@ export const reelItems: ReelItem[] = [
     icon: Type,
     beat: "odometer-rolling letters",
     line: "Letters shared between two words slide across in place while the unmatched ones roll in like an odometer — a digit that changed more travels visibly faster in the same time.",
-    gif: "character-flow.gif",
+    clip: "character-flow.gif",
   },
   {
     title: "Style Flow",
@@ -70,7 +75,7 @@ export const reelItems: ReelItem[] = [
     icon: Sparkles,
     beat: "one word, breathing",
     line: "A single word sits still, then starts to breathe: one letter thickens, another leans into italic, another sprouts serifs, before the whole run eases home to a clean wordmark.",
-    gif: "style-flow.gif",
+    clip: "style-flow.webm",
   },
   {
     title: "Concept table 1",
@@ -78,7 +83,7 @@ export const reelItems: ReelItem[] = [
     icon: Table2,
     beat: "split-flap row flip",
     line: "The data changes but no row moves; each slot flips over in place like a split-flap departure board, so your eyes never have to re-find where they were.",
-    gif: "concept-table.gif",
+    clip: "concept-table.webm",
   },
   {
     title: "Concept chat",
@@ -86,7 +91,7 @@ export const reelItems: ReelItem[] = [
     icon: MessagesSquare,
     beat: "message performs itself",
     line: "A chat message arrives as a poster with a play button; press play and the lines perform themselves one after another at the pace the sender chose.",
-    gif: "concept-chat.gif",
+    clip: "concept-chat.webm",
   },
   {
     title: "TanStack, lid off",
@@ -94,6 +99,6 @@ export const reelItems: ReelItem[] = [
     icon: Layers,
     beat: "flip the status, watch nothing happen",
     line: "Change a ticket's status at the TanStack DB rung and the inbox updates in the same tick while the right-hand timeline shows the write landing locally before any request has gone out.",
-    gif: "tanstack-showcase.gif",
+    clip: "tanstack-showcase.webm",
   },
 ]
