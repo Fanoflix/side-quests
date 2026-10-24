@@ -4,46 +4,53 @@ import { Upload } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Panel } from "@/components/stage/Panel"
 import { Range } from "@/components/stage/Range"
-import type { DotShape } from "./PixelScreen"
-
-export type ScreenSettings = {
-  width: number
-  height: number
-  gap: number
-  dotSize: number
-}
-
-const SHAPES: DotShape[] = ["circle", "square", "diamond"]
+import { CharacterFlow } from "@/features/motion/character-flow/CharacterFlow"
+import { formatDots } from "./screen"
+import type { Grid, Look } from "./screen"
+import { PRESETS, SHAPES } from "./useLowResVideo"
+import type { PresetKey } from "./useLowResVideo"
 
 type Props = {
-  settings: ScreenSettings
-  onChange: (patch: Partial<ScreenSettings>) => void
-  hasVideo: boolean
-  lockAspect: boolean
-  onToggleLockAspect: () => void
-  shape: DotShape
-  onShapeChange: (shape: DotShape) => void
+  grid: Grid
+  limits: { maxCols: number; maxRows: number }
+  look: Look
+  preset: PresetKey | null
+  lockToVideo: boolean
+  onCols: (cols: number) => void
+  onRows: (rows: number) => void
+  onLook: (patch: Partial<Look>) => void
+  onPreset: (key: PresetKey) => void
+  onToggleLock: () => void
   onPickFile: (file: File) => void
 }
 
+const percent = (value: number) => `${Math.round(value * 100)}%`
+
 export function Controls({
-  settings,
-  onChange,
-  hasVideo,
-  lockAspect,
-  onToggleLockAspect,
-  shape,
-  onShapeChange,
+  grid,
+  limits,
+  look,
+  preset,
+  lockToVideo,
+  onCols,
+  onRows,
+  onLook,
+  onPreset,
+  onToggleLock,
   onPickFile,
 }: Props) {
   const fileRef = useRef<HTMLInputElement>(null)
 
   return (
-    <Panel title="Controls">
-      <div className="flex gap-2">
-        <Button className="flex-1" onClick={() => fileRef.current?.click()}>
+    <>
+      <Panel title="Video">
+        <Button
+          variant="outline"
+          className="w-full"
+          onClick={() => fileRef.current?.click()}
+        >
           <Upload />
-          {hasVideo ? "Replace video" : "Upload video"}
+          Use your own video
         </Button>
         <input
           ref={fileRef}
@@ -56,63 +63,90 @@ export function Controls({
             e.target.value = ""
           }}
         />
-      </div>
+      </Panel>
 
-      <Range
-        label="Columns"
-        value={settings.width}
-        min={1}
-        max={900}
-        onChange={(width) => onChange({ width })}
-      />
-      <Range
-        label="Rows"
-        value={settings.height}
-        min={1}
-        max={900}
-        onChange={(height) => onChange({ height })}
-      />
-      <Range
-        label="Gap"
-        value={settings.gap}
-        min={0}
-        max={50}
-        unit="px"
-        onChange={(gap) => onChange({ gap })}
-      />
-      <Range
-        label="Dot size"
-        value={settings.dotSize}
-        min={1}
-        max={100}
-        unit="px"
-        onChange={(dotSize) => onChange({ dotSize })}
-      />
-
-      <label className="flex cursor-pointer items-center justify-between gap-2 select-none">
-        <span className="text-xs text-muted-foreground">Keep aspect ratio</span>
-        <input
-          type="checkbox"
-          checked={lockAspect}
-          onChange={onToggleLockAspect}
-          className="size-4 accent-primary"
+      <Panel
+        title="Grid"
+        action={
+          <CharacterFlow
+            value={formatDots(grid)}
+            className="text-xs text-muted-foreground tabular-nums"
+          />
+        }
+      >
+        <Range
+          label="Columns"
+          value={grid.cols}
+          min={4}
+          max={limits.maxCols}
+          onChange={onCols}
         />
-      </label>
+        <Range
+          label="Rows"
+          value={grid.rows}
+          min={4}
+          max={limits.maxRows}
+          onChange={onRows}
+          disabled={lockToVideo}
+        />
+        <label className="flex cursor-pointer items-center justify-between gap-2 text-xs text-muted-foreground select-none">
+          Keep the video's shape
+          <input
+            type="checkbox"
+            checked={lockToVideo}
+            onChange={onToggleLock}
+            className="size-3.5 accent-primary"
+          />
+        </label>
+      </Panel>
 
-      <label className="flex items-center justify-between gap-2">
-        <span className="text-xs text-muted-foreground">Shape</span>
-        <select
-          value={shape}
-          onChange={(e) => onShapeChange(e.target.value as DotShape)}
-          className="h-8 rounded-none border border-border bg-background px-2 text-xs capitalize outline-none focus-visible:ring-2 focus-visible:ring-ring/30"
-        >
-          {SHAPES.map((s) => (
-            <option key={s} value={s} className="capitalize">
-              {s}
-            </option>
+      <Panel title="Look">
+        <div className="grid grid-cols-2 gap-1.5">
+          {PRESETS.map(({ key, label }) => (
+            <Button
+              key={key}
+              size="sm"
+              variant={preset === key ? "default" : "outline"}
+              aria-pressed={preset === key}
+              onClick={() => onPreset(key)}
+            >
+              {label}
+            </Button>
           ))}
-        </select>
-      </label>
-    </Panel>
+        </div>
+        <div className="flex gap-1">
+          {SHAPES.map(({ value, label }) => (
+            <Button
+              key={value}
+              size="sm"
+              className="flex-1"
+              variant={look.shape === value ? "default" : "outline"}
+              aria-pressed={look.shape === value}
+              onClick={() => onLook({ shape: value })}
+            >
+              {label}
+            </Button>
+          ))}
+        </div>
+        <Range
+          label="Dot size"
+          value={look.fill}
+          min={0.2}
+          max={1}
+          step={0.02}
+          format={percent}
+          onChange={(fill) => onLook({ fill })}
+        />
+        <label className="flex cursor-pointer items-center justify-between gap-2 text-xs text-muted-foreground select-none">
+          Glow
+          <input
+            type="checkbox"
+            checked={look.glow}
+            onChange={() => onLook({ glow: !look.glow })}
+            className="size-3.5 accent-primary"
+          />
+        </label>
+      </Panel>
+    </>
   )
 }

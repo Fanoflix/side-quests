@@ -25,6 +25,10 @@ if (!existsSync(shell)) {
 }
 
 await copyFile(shell, join(outDir, "404.html"))
+await copyFile(
+  join(process.cwd(), "src", "assets", "favicon.svg"),
+  join(outDir, "favicon.svg")
+)
 await writeFile(join(outDir, ".nojekyll"), "")
 
-console.log("[postbuild-pages] wrote 404.html + .nojekyll")
+console.log("[postbuild-pages] wrote 404.html, favicon.svg + .nojekyll")

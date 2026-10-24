@@ -1,7 +1,7 @@
-import markSvg from "../../../public/favicon.svg?raw"
+import markSvg from "@/assets/favicon.svg?raw"
 
 /**
- * The site's mark, inlined from `public/favicon.svg` at build time.
+ * The site's mark, inlined from `src/assets/favicon.svg` at build time.
  *
  * That file is the single source: the favicon and this component are the same
  * artwork, and keeping a second copy of the path data here meant every tweak was

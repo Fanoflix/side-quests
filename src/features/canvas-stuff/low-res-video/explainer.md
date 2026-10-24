@@ -10,9 +10,9 @@ Nothing is picked or skipped. Every pixel of the original counts towards some do
 
 ## 2. Blow it back up as dots
 
-Each of those colours is drawn as a single round dot, with dark space around it. The gaps are what make it look like a screen made of lights instead of a blurry video.
+Each of those colours is drawn as a single round dot, with dark space around it. The gaps are what make it look like a screen made of lights instead of a blurry video. A soft blurred copy sits behind the dots, so the light spills into the gaps like a real LED.
 
-Every dot is drawn the exact same whole number of pixels wide. If they were 12.7 pixels wide, some would land between pixels and the whole grid would shimmer.
+Every dot is drawn the exact same whole number of pixels wide, and the grid is never allowed to be bigger than the screen. If dots were 12.7 pixels wide, or squeezed to fit, they'd land between pixels and the whole grid would shimmer.
 
 ## Try this
 

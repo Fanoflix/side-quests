@@ -1,71 +1,85 @@
 import { useEffect, useRef, useState } from "react"
 
 import { useToolStage } from "@/components/stage/useToolStage"
+import { useDevicePixelRatio } from "@/hooks/useDevicePixelRatio"
+import { MAX_SCREEN_H, fitScreen, maxGrid, resolveGrid } from "./screen"
+import type { DotShape, Grid, Look } from "./screen"
+import { useDotScreen } from "./useDotScreen"
 
-import type { ScreenSettings } from "./Controls"
-import type { DotShape, PixelScreenHandle } from "./PixelScreen"
-import { useVideoFrames } from "./useVideoFrames"
-
-const DEFAULT_SETTINGS: ScreenSettings = {
-  width: 64,
-  height: 36,
-  gap: 2,
-  dotSize: 3,
-}
-
-const WIDTH_RANGE = [8, 1200] as const
-const HEIGHT_RANGE = [8, 800] as const
-
-const clamp = (n: number, min: number, max: number) =>
-  Math.min(max, Math.max(min, n))
-
-/**
- * All of the low-res-video screen's state and behaviour: the dot-grid settings
- * (with optional aspect-ratio locking), video loading/seeking/playback, and the
- * frame-grab loop that feeds the {@link PixelScreen}. The view binds `videoRef`
- * and `screenRef` and renders the rest — it holds no logic of its own.
- */
 const DEFAULT_CLIP = `${import.meta.env.BASE_URL.replace(/\/+$/, "")}/low-res-default.mp4`
+const FALLBACK_AREA_W = 720
+const STAGE_GUTTER = 48
+const GLOW_BLUR = 0.9
+const GLOW_OPACITY = 0.7
+
+export type PresetKey = "scoreboard" | "led" | "litebrite" | "pixels"
+
+export const PRESETS: {
+  key: PresetKey
+  label: string
+  look: Look
+  cols?: number
+}[] = [
+  {
+    key: "scoreboard",
+    label: "Scoreboard",
+    look: { shape: "circle", fill: 0.78, glow: true },
+  },
+  {
+    key: "led",
+    label: "LED wall",
+    look: { shape: "square", fill: 0.84, glow: true },
+    cols: 96,
+  },
+  {
+    key: "litebrite",
+    label: "Lite-Brite",
+    look: { shape: "circle", fill: 0.58, glow: true },
+    cols: 40,
+  },
+  {
+    key: "pixels",
+    label: "Pixels",
+    look: { shape: "square", fill: 1, glow: false },
+  },
+]
+
+export const SHAPES: { value: DotShape; label: string }[] = [
+  { value: "circle", label: "Round" },
+  { value: "square", label: "Square" },
+  { value: "diamond", label: "Diamond" },
+]
 
 export function useLowResVideo() {
   const stage = useToolStage()
-  const [settings, setSettings] = useState<ScreenSettings>(DEFAULT_SETTINGS)
-  const [shape, setShape] = useState<DotShape>("circle")
-  const [hasVideo, setHasVideo] = useState(false)
+  const dpr = useDevicePixelRatio()
+  const [wanted, setWanted] = useState<Grid>({ cols: 64, rows: 36 })
+  const [look, setLook] = useState<Look>(PRESETS[0].look)
+  const [preset, setPreset] = useState<PresetKey | null>("scoreboard")
+  const [lockToVideo, setLockToVideo] = useState(true)
+  const [videoAspect, setVideoAspect] = useState(16 / 9)
   const [playing, setPlaying] = useState(false)
   const [muted, setMuted] = useState(true)
-  // Kept separately from `muted` so unmuting restores the level you had rather
-  // than jumping to full volume. Starts at a polite 0.6 — this is a page you
-  // land on from a link, not a player you chose to open.
   const [volume, setVolumeState] = useState(0.6)
-  const [lockAspect, setLockAspect] = useState(true)
   const [currentTime, setCurrentTime] = useState(0)
   const [duration, setDuration] = useState(0)
-  const [videoAspect, setVideoAspect] = useState(16 / 9)
 
   const videoRef = useRef<HTMLVideoElement>(null)
-  const screenRef = useRef<PixelScreenHandle>(null)
   const urlRef = useRef<string | null>(null)
-  // The video's native aspect ratio, once metadata has loaded.
-  const aspectRef = useRef<number | null>(null)
-  // Read inside the (mount-only) metadata listener without re-subscribing.
-  const lockAspectRef = useRef(lockAspect)
-  lockAspectRef.current = lockAspect
 
-  useVideoFrames(videoRef, settings.width, settings.height, (data) =>
-    screenRef.current?.paint(data)
-  )
+  const areaW = stage.width ? stage.width - STAGE_GUTTER : FALLBACK_AREA_W
+  const areaH = Math.min(MAX_SCREEN_H, Math.round(areaW / videoAspect))
+  const max = maxGrid(areaW, areaH)
+  const { grid, maxCols } = resolveGrid(wanted, lockToVideo, videoAspect, max)
+  const layout = fitScreen(grid, areaW, areaH, dpr)
 
-  // Release the last object URL when we're done with it.
-  useEffect(
-    () => () => {
-      if (urlRef.current) URL.revokeObjectURL(urlRef.current)
-    },
-    []
-  )
+  const { dotsRef, glowRef } = useDotScreen(videoRef, { grid, look, layout })
+  const screenStyle = { width: layout.cssW, height: layout.cssH }
+  const glowStyle = {
+    filter: `blur(${((layout.cell / dpr) * GLOW_BLUR).toFixed(1)}px) saturate(1.6)`,
+    opacity: look.glow ? GLOW_OPACITY : 0,
+  }
 
-  // Keep the element's audio properties in sync with state. Muted by default,
-  // which is also what satisfies the autoplay policy.
   useEffect(() => {
     const video = videoRef.current
     if (!video) return
@@ -73,93 +87,64 @@ export function useLowResVideo() {
     video.volume = volume
   }, [muted, volume])
 
-  // Subscribe to the video element's events once; state setters are stable and
-  // the live lock flag is read through a ref.
   useEffect(() => {
     const video = videoRef.current
     if (!video) return
-
     const onPlay = () => setPlaying(true)
     const onPause = () => setPlaying(false)
     const onTime = () => setCurrentTime(video.currentTime)
     const onDuration = () => setDuration(video.duration || 0)
     const onMeta = () => {
-      if (!video.videoWidth || !video.videoHeight) return
-      const ar = video.videoWidth / video.videoHeight
-      aspectRef.current = ar
-      setVideoAspect(ar)
-      if (lockAspectRef.current) {
-        setSettings((s) => ({
-          ...s,
-          height: clamp(Math.round(s.width / ar), ...HEIGHT_RANGE),
-        }))
+      if (video.videoWidth && video.videoHeight) {
+        setVideoAspect(video.videoWidth / video.videoHeight)
       }
     }
-
     video.addEventListener("play", onPlay)
     video.addEventListener("pause", onPause)
     video.addEventListener("timeupdate", onTime)
     video.addEventListener("durationchange", onDuration)
     video.addEventListener("loadedmetadata", onMeta)
+    video.src = DEFAULT_CLIP
+    void video.play().catch(() => {})
     return () => {
       video.removeEventListener("play", onPlay)
       video.removeEventListener("pause", onPause)
       video.removeEventListener("timeupdate", onTime)
       video.removeEventListener("durationchange", onDuration)
       video.removeEventListener("loadedmetadata", onMeta)
+      if (urlRef.current) URL.revokeObjectURL(urlRef.current)
     }
   }, [])
 
-  // Apply a settings change, deriving the dependent dimension from the video's
-  // aspect ratio when the lock is on so the screen keeps the original shape.
-  const onChange = (patch: Partial<ScreenSettings>) => {
-    setSettings((s) => {
-      const next = { ...s, ...patch }
-      const ar = aspectRef.current
-      if (lockAspect && ar) {
-        if (patch.width !== undefined) {
-          next.height = clamp(Math.round(patch.width / ar), ...HEIGHT_RANGE)
-        } else if (patch.height !== undefined) {
-          next.width = clamp(Math.round(patch.height * ar), ...WIDTH_RANGE)
-        }
-      }
-      return next
-    })
-  }
-
-  const toggleLockAspect = () => {
-    setLockAspect((locked) => {
-      const nextLocked = !locked
-      const ar = aspectRef.current
-      // Snap to the original ratio the moment the lock is switched on.
-      if (nextLocked && ar) {
-        setSettings((s) => ({
-          ...s,
-          height: clamp(Math.round(s.width / ar), ...HEIGHT_RANGE),
-        }))
-      }
-      return nextLocked
-    })
-  }
-
-  const playSource = (src: string) => {
+  const pickFile = (file: File) => {
     const video = videoRef.current
     if (!video) return
-    video.src = src
-    void video.play().catch(() => {})
-    setHasVideo(true)
+    if (urlRef.current) URL.revokeObjectURL(urlRef.current)
+    urlRef.current = URL.createObjectURL(file)
+    video.src = urlRef.current
     setCurrentTime(0)
+    void video.play().catch(() => {})
   }
 
-  useEffect(() => {
-    playSource(DEFAULT_CLIP)
-  }, [])
+  const setCols = (cols: number) => setWanted({ ...grid, cols })
+  const setRows = (rows: number) => setWanted({ ...grid, rows })
 
-  const pickFile = (file: File) => {
-    if (urlRef.current) URL.revokeObjectURL(urlRef.current)
-    const url = URL.createObjectURL(file)
-    urlRef.current = url
-    playSource(url)
+  const updateLook = (patch: Partial<Look>) => {
+    setPreset(null)
+    setLook((prev) => ({ ...prev, ...patch }))
+  }
+
+  const applyPreset = (key: PresetKey) => {
+    const next = PRESETS.find((p) => p.key === key)
+    if (!next) return
+    setPreset(key)
+    setLook(next.look)
+    if (next.cols) setWanted({ ...grid, cols: next.cols })
+  }
+
+  const toggleLock = () => {
+    setWanted(grid)
+    setLockToVideo((locked) => !locked)
   }
 
   const seek = (time: number) => {
@@ -178,11 +163,6 @@ export function useLowResVideo() {
 
   const toggleMute = () => setMuted((m) => !m)
 
-  /**
-   * Dragging the slider is itself an unmute — reaching for volume and getting
-   * silence because a separate button is still latched is the single most
-   * annoying thing a player can do. Dragging to zero mutes, symmetrically.
-   */
   const setVolume = (next: number) => {
     const clamped = Math.min(1, Math.max(0, next))
     setVolumeState(clamped)
@@ -191,21 +171,26 @@ export function useLowResVideo() {
 
   return {
     stage,
-    settings,
-    shape,
-    hasVideo,
+    grid,
+    limits: { maxCols, maxRows: max.rows },
+    screenStyle,
+    glowStyle,
+    look,
+    preset,
+    lockToVideo,
     playing,
     muted,
     volume,
-    lockAspect,
     currentTime,
     duration,
-    videoAspect,
     videoRef,
-    screenRef,
-    onChange,
-    setShape,
-    toggleLockAspect,
+    dotsRef,
+    glowRef,
+    setCols,
+    setRows,
+    updateLook,
+    applyPreset,
+    toggleLock,
     pickFile,
     seek,
     togglePlay,

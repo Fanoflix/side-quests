@@ -9,21 +9,26 @@ import { useLowResVideo } from "./useLowResVideo"
 export function LowResVideo() {
   const {
     stage,
-    settings,
-    shape,
-    hasVideo,
+    grid,
+    limits,
+    screenStyle,
+    glowStyle,
+    look,
+    preset,
+    lockToVideo,
     playing,
     muted,
     volume,
-    lockAspect,
     currentTime,
     duration,
-    videoAspect,
     videoRef,
-    screenRef,
-    onChange,
-    setShape,
-    toggleLockAspect,
+    dotsRef,
+    glowRef,
+    setCols,
+    setRows,
+    updateLook,
+    applyPreset,
+    toggleLock,
     pickFile,
     seek,
     togglePlay,
@@ -35,27 +40,26 @@ export function LowResVideo() {
     <div className="flex w-full flex-col gap-8">
       <ToolIntro
         title="Low Res Video"
-        hint="Shrink the grid until it stops looking like anything. Drop in your own video to try it on that."
+        hint="Drag Columns down until it stops looking like anything. Drop in your own video to try it on that."
       >
         How few dots does a video need before you can't tell what it is?
       </ToolIntro>
 
-      {/* The transport rides *inside* the screen container rather than sitting
-          under it: the screen is resizable, and a sibling bar either forced a
-          fixed width on the whole thing or overflowed once the screen grew past
-          it. As an overlay it simply tracks whatever size the screen is. */}
       <ToolStage
         stage={stage}
-        className="grid min-h-[34rem] place-items-center px-6 py-14"
+        className="grid min-h-[30rem] place-items-center px-6 py-12"
         controls={
           <Controls
-            settings={settings}
-            onChange={onChange}
-            hasVideo={hasVideo}
-            lockAspect={lockAspect}
-            onToggleLockAspect={toggleLockAspect}
-            shape={shape}
-            onShapeChange={setShape}
+            grid={grid}
+            limits={limits}
+            look={look}
+            preset={preset}
+            lockToVideo={lockToVideo}
+            onCols={setCols}
+            onRows={setRows}
+            onLook={updateLook}
+            onPreset={applyPreset}
+            onToggleLock={toggleLock}
             onPickFile={pickFile}
           />
         }
@@ -63,21 +67,15 @@ export function LowResVideo() {
         <FileDropZone
           accept="video/*"
           onPick={pickFile}
-          empty={!hasVideo}
-          hint="Drop a video, or click to upload"
-          className="group grid w-full place-items-center overflow-auto"
+          empty={false}
+          hint="Drop a video"
         >
           <PixelScreen
-            ref={screenRef}
-            width={settings.width}
-            height={settings.height}
-            gap={settings.gap}
-            dotSize={settings.dotSize}
-            shape={shape}
-            aspect={videoAspect}
-          />
-
-          {hasVideo && (
+            dotsRef={dotsRef}
+            glowRef={glowRef}
+            screenStyle={screenStyle}
+            glowStyle={glowStyle}
+          >
             <VideoTransport
               playing={playing}
               onTogglePlay={togglePlay}
@@ -89,11 +87,18 @@ export function LowResVideo() {
               volume={volume}
               onVolumeChange={setVolume}
             />
-          )}
+          </PixelScreen>
         </FileDropZone>
       </ToolStage>
 
-      <video ref={videoRef} className="hidden" playsInline loop muted />
+      <video
+        ref={videoRef}
+        className="pointer-events-none fixed top-0 left-0 size-px opacity-0"
+        aria-hidden
+        playsInline
+        loop
+        muted
+      />
     </div>
   )
 }
