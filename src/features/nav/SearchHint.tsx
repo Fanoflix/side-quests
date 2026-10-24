@@ -1,3 +1,4 @@
+import { cn } from "@/lib/utils"
 import { isSearchShortcut } from "./shortcut"
 import { HELD_CLASS, useShortcutHold } from "./useShortcutHold"
 
@@ -32,7 +33,11 @@ export function SearchHint({
       aria-hidden
       // `inline-block` so the scale lands — transforms are ignored on inline
       // boxes.
-      className={`pointer-events-none inline-block rounded border border-border px-1.5 py-0.5 text-xs font-normal tracking-wider whitespace-nowrap opacity-55 transition-opacity duration-75 group-hover:opacity-100 ${held ? HELD_CLASS : ""} ${className}`}
+      className={cn(
+        "pointer-events-none inline-block rounded border border-border px-1.5 py-0.5 text-xs font-normal tracking-wider whitespace-nowrap opacity-55 transition-opacity duration-75 group-hover:opacity-100",
+        held && HELD_CLASS,
+        className
+      )}
     >
       ⌘K
     </span>

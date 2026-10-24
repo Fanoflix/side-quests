@@ -1,5 +1,5 @@
 import { ToolIntro } from "@/components/layout/ToolIntro"
-import { FloatingPanels } from "@/components/floating-panels/FloatingPanels"
+import { ToolStage } from "@/components/stage/ToolStage"
 import { ZoomBox } from "@/components/loupe/ZoomBox"
 import { ZoomSelection } from "@/components/loupe/ZoomSelection"
 import { AACanvas } from "./AACanvas"
@@ -11,7 +11,7 @@ export function AntiAlias() {
     settings,
     comparing,
     compareLatched,
-    collapsed,
+    stage,
     animating,
     region,
     zoomLevel,
@@ -24,59 +24,60 @@ export function AntiAlias() {
     setCompareLatched,
     startPeek,
     endPeek,
-    setCollapsed,
     setAnimating,
     setRegion,
     setZoomLevel,
   } = useAntiAlias()
 
   return (
-    <div className="flex w-full flex-col items-center gap-8">
-      <ToolIntro title="Anti-aliasing" className="w-full max-w-3xl">
-        Every game you've played fights this: screens are made of squares, and
-        nothing in a game is. The fix is almost too dumb — look at each pixel a
-        few extra times and average what you saw. Drag Samples up and watch the
-        staircase melt.
+    <div className="flex w-full flex-col gap-8">
+      <ToolIntro
+        title="Anti-aliasing"
+        hint="Drag Samples up to smooth the edge out. Hold the image to see it without."
+      >
+        Pixels are square, so every curve on your screen is really a staircase.
       </ToolIntro>
 
-      <div className="relative grid place-items-center bg-black p-4">
-        <AACanvas
-          ref={canvasRef}
-          comparing={comparing}
-          displayWidth={displayWidth}
-          displayHeight={displayHeight}
-          onHoldStart={startPeek}
-          onHoldEnd={endPeek}
-        >
-          <ZoomSelection
-            region={region}
-            width={displayWidth}
-            height={displayHeight}
-            onChange={setRegion}
-          />
-        </AACanvas>
-      </div>
-
-      <FloatingPanels
-        collapsed={collapsed}
-        onExpand={() => setCollapsed(false)}
+      <ToolStage
+        stage={stage}
+        className="grid min-h-[34rem] place-items-center px-6 py-14"
+        controls={
+          <>
+            <Controls
+              settings={settings}
+              onChange={onChange}
+              animating={animating}
+              onToggleAnimate={setAnimating}
+              onExport={exportPng}
+              comparing={compareLatched}
+              onComparingChange={setCompareLatched}
+            />
+            <ZoomBox
+              loupeRef={loupeRef}
+              zoomLevel={zoomLevel}
+              onZoomLevelChange={setZoomLevel}
+            />
+          </>
+        }
       >
-        <Controls
-          settings={settings}
-          onChange={onChange}
-          animating={animating}
-          onToggleAnimate={setAnimating}
-          onExport={exportPng}
-          comparing={compareLatched}
-          onComparingChange={setCompareLatched}
-          onCollapse={() => setCollapsed(true)}
-        />
-        <ZoomBox
-          loupeRef={loupeRef}
-          zoomLevel={zoomLevel}
-          onZoomLevelChange={setZoomLevel}
-        />
-      </FloatingPanels>
+        <div className="relative grid place-items-center shadow-2xl ring-1 ring-border">
+          <AACanvas
+            ref={canvasRef}
+            comparing={comparing}
+            displayWidth={displayWidth}
+            displayHeight={displayHeight}
+            onHoldStart={startPeek}
+            onHoldEnd={endPeek}
+          >
+            <ZoomSelection
+              region={region}
+              width={displayWidth}
+              height={displayHeight}
+              onChange={setRegion}
+            />
+          </AACanvas>
+        </div>
+      </ToolStage>
     </div>
   )
 }

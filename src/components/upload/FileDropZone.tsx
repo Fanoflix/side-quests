@@ -111,7 +111,7 @@ export function FileDropZone({
         >
           <span
             className={cn(
-              "border border-dashed px-6 py-4 text-xs tracking-widest uppercase transition-colors",
+              "border border-dashed px-6 py-4 text-xs transition-colors",
               dragging
                 ? "border-white/60 text-white"
                 : "border-white/25 text-white/50 group-hover:border-white/40"

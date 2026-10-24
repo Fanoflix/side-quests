@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 
 import { useFutureTable } from "../engine/useFutureTable"
 import { flightColumns } from "./columns"
@@ -43,6 +43,9 @@ const FULL_DATASET: Flight[] = Array.from({ length: 24 }, (_, i) =>
   makeFlight(i)
 )
 
+const FIRST_LOAD_MS = 450
+const LIVE_TICK_MS = 2600
+
 /**
  * Owns the demo's data + current page and exposes the actions the view wires to
  * buttons. All logic lives here; `FutureTableDemo` just renders.
@@ -50,6 +53,7 @@ const FULL_DATASET: Flight[] = Array.from({ length: 24 }, (_, i) =>
 export function useFutureTableDemo() {
   const [data, setData] = useState<Flight[]>([])
   const [pageIndex, setPageIndex] = useState(0)
+  const [live, setLive] = useState(true)
 
   const getRowId = useCallback((row: Flight) => row.id, [])
 
@@ -90,6 +94,30 @@ export function useFutureTableDemo() {
     )
   }, [])
 
+  useEffect(() => {
+    const id = setTimeout(() => setData(FULL_DATASET), FIRST_LOAD_MS)
+    return () => clearTimeout(id)
+  }, [])
+
+  const hasData = data.length > 0
+
+  useEffect(() => {
+    if (!live || !hasData) return
+    const id = setInterval(() => {
+      setData((d) => {
+        const target = Math.floor(Math.random() * Math.min(d.length, ROW_COUNT))
+        const index = pageIndex * ROW_COUNT + target
+        if (!d[index]) return d
+        const current = STATUSES.indexOf(d[index].status)
+        const status = STATUSES[(current + 1) % STATUSES.length]
+        return d.map((f, i) => (i === index ? { ...f, status } : f))
+      })
+    }, LIVE_TICK_MS)
+    return () => clearInterval(id)
+  }, [live, hasData, pageIndex])
+
+  const toggleLive = useCallback(() => setLive((v) => !v), [])
+
   const nextPage = useCallback(
     () => setPageIndex((p) => Math.min(p + 1, table.pageCount - 1)),
     [table.pageCount]
@@ -102,7 +130,9 @@ export function useFutureTableDemo() {
   return {
     table,
     pageIndex,
-    hasData: data.length > 0,
+    hasData,
+    live,
+    toggleLive,
     load,
     clear,
     addRow,

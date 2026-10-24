@@ -10,7 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { Panel } from "@/components/floating-panels/FloatingPanels"
+import { Panel } from "@/components/stage/Panel"
 import { MAX_RES, MAX_SAMPLES, MIN_RES, MIN_SAMPLES, SCENES } from "./raster"
 import type { AASettings } from "./raster"
 
@@ -22,7 +22,6 @@ type Props = {
   onExport: () => void
   comparing: boolean
   onComparingChange: (comparing: boolean) => void
-  onCollapse: () => void
 }
 
 export function Controls({
@@ -33,12 +32,11 @@ export function Controls({
   onExport,
   comparing,
   onComparingChange,
-  onCollapse,
 }: Props) {
   const sceneLabel = SCENES.find((s) => s.value === settings.scene)?.label
 
   return (
-    <Panel title="Controls" onCollapse={onCollapse}>
+    <Panel title="Controls">
       <div className="flex gap-2">
         {/* A latch, not a hold — holding still works on the canvas itself.
             This is the one you want while dragging Samples. */}
@@ -62,9 +60,7 @@ export function Controls({
       </div>
 
       <div className="flex items-center justify-between gap-2">
-        <span className="text-xs font-semibold tracking-widest text-muted-foreground uppercase">
-          Scene
-        </span>
+        <span className="text-xs text-muted-foreground">Scene</span>
         <Select
           value={settings.scene}
           onValueChange={(v) => onChange({ scene: v as AASettings["scene"] })}
@@ -123,9 +119,7 @@ export function Controls({
       />
 
       <label className="flex cursor-pointer items-center justify-between gap-2 select-none">
-        <span className="text-xs font-semibold tracking-widest text-muted-foreground uppercase">
-          Animate
-        </span>
+        <span className="text-xs text-muted-foreground">Animate</span>
         <input
           type="checkbox"
           checked={animating}
@@ -162,7 +156,7 @@ function Range({
     <label
       className={`flex items-center gap-3 ${disabled ? "opacity-40" : ""}`}
     >
-      <span className="w-20 shrink-0 text-xs font-semibold tracking-widest text-muted-foreground uppercase">
+      <span className="w-20 shrink-0 text-xs text-muted-foreground">
         {label}
       </span>
       <input

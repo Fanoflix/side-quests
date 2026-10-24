@@ -26,8 +26,8 @@ type Props = {
  *
  * It fades in on hover, and on focus too: keyboard users never trigger hover,
  * and a control you can tab to but not see is worse than one that isn't there.
- * `pointer-events` follow the fade so the hidden bar can't swallow a drag meant
- * for the screen's resize handle.
+ * `pointer-events` follow the fade so the hidden bar can't swallow clicks meant
+ * for the screen.
  */
 export function VideoTransport({
   playing,
@@ -48,10 +48,9 @@ export function VideoTransport({
   return (
     <div
       className={cn(
-        // pr-10 leaves the bottom-right corner to the screen's resize handle.
-        "absolute inset-x-0 bottom-0 z-20 flex items-center gap-3 py-2 pr-10 pl-3",
+        "absolute inset-x-0 bottom-0 z-20 flex items-center gap-3 px-3 py-2",
         "bg-gradient-to-t from-black/85 to-transparent pb-3",
-        "opacity-0 transition-opacity duration-200 group-hover:opacity-100",
+        "opacity-0 transition-opacity duration-175 ease-snap group-hover:opacity-100",
         "focus-within:opacity-100",
         "pointer-events-none [&_button]:pointer-events-auto [&_input]:pointer-events-auto",
         className

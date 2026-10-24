@@ -39,7 +39,6 @@ export function TanstackShowcase() {
     clearLog,
     resetDemo,
     resetKey,
-    railOffset,
     latestEvent,
     attachFlows,
   } = useTanstackShowcase()
@@ -48,23 +47,31 @@ export function TanstackShowcase() {
     <div
       className={cn(
         // Pinned to the viewport rather than growing with its contents: the
-        // shell minus the shared layout's header (h-12) and padding (p-6, top
-        // and bottom). That's what stops the *page* scrolling — each pane
-        // handles its own overflow instead.
+        // shell minus the shared layout's header (h-14), its top padding
+        // (pt-10) and a 24px gap at the bottom. That's what stops the *page*
+        // scrolling — each pane handles its own overflow instead.
         //
         // `min-h-100` is the floor. Below that the page scrolls again, which is
         // the right fallback: three panes crushed into 200px would be unusable.
-        "mx-auto flex w-full max-w-[2240px] flex-col gap-3 self-stretch transition-[padding] duration-200 lg:h-[calc(100svh-5rem)] lg:min-h-100",
-        // The shared layout's own p-6 already covers part of the track.
-        railOffset && "lg:pl-[calc(var(--sidebar-width)-1.5rem)]"
+        "mx-auto flex w-full max-w-[2240px] flex-col gap-3 self-stretch lg:h-[calc(100svh-7.5rem)] lg:min-h-100"
       )}
     >
-      <ToolIntro title="TanStack, with the lid off" className="shrink-0">
-        The same ticket app, built three ways. Step up the ladder and watch what
-        stops happening — the requests, the spinners, the hand-written
-        bookkeeping. Everything on the right is real:{" "}
-        <IntroLink href="https://tanstack.com/query">TanStack Query</IntroLink>{" "}
-        reporting its own cache, not a re-enactment.
+      <ToolIntro
+        title="TanStack, lid off"
+        className="shrink-0"
+        hint={
+          <>
+            Switch between the three versions at the top. The panel on the right
+            is{" "}
+            <IntroLink href="https://tanstack.com/query">
+              TanStack Query
+            </IntroLink>{" "}
+            reporting its own cache, not a recording.
+          </>
+        }
+      >
+        The same app built three ways, so you can watch the bookkeeping
+        disappear.
       </ToolIntro>
 
       <Controls

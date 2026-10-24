@@ -13,6 +13,8 @@ export function FutureTableDemo() {
     table,
     pageIndex,
     hasData,
+    live,
+    toggleLive,
     load,
     clear,
     addRow,
@@ -22,15 +24,24 @@ export function FutureTableDemo() {
   } = useFutureTableDemo()
 
   return (
-    <div className="w-full max-w-3xl space-y-4">
-      <ToolIntro title="Concept table 1">
-        Most tables throw their rows away and build new ones every time the data
-        changes. This one never moves a row — the slots stay put and the
-        contents flip over in place, like a train station departure board.
+    <div className="w-full space-y-4">
+      <ToolIntro
+        title="Concept table"
+        hint="Statuses change on their own every few seconds. Page through, add a row or clear it and watch the rows stay put."
+      >
+        What if table rows never moved, and only what's in them changed?
       </ToolIntro>
 
       <div className="flex flex-wrap gap-2">
         <Button onClick={load}>Load data</Button>
+        <Button
+          variant={live ? "default" : "outline"}
+          aria-pressed={live}
+          onClick={toggleLive}
+          disabled={!hasData}
+        >
+          {live ? "Live" : "Paused"}
+        </Button>
         <Button variant="outline" onClick={addRow}>
           Add row
         </Button>

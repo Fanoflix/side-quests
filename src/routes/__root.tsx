@@ -6,6 +6,7 @@ import { AppLayout } from "@/components/layout/AppLayout"
 import { SITE_DESCRIPTION, SITE_TITLE, pageMeta } from "@/features/seo/meta"
 import { themeInitScript } from "@/features/theme/theme"
 import appCss from "../styles.css?url"
+import faviconUrl from "../assets/favicon.svg?url"
 
 /**
  * Everything under `public/` has to be reached through the base path.
@@ -45,7 +46,7 @@ export const Route = createRootRoute({
       // SVG only. It's also the only format that can follow the tab strip's
       // theme, via the `prefers-color-scheme` rule inside the file — every
       // browser that would need a raster fallback predates that anyway.
-      { rel: "icon", type: "image/svg+xml", href: asset("favicon.svg") },
+      { rel: "icon", type: "image/svg+xml", href: faviconUrl },
       { rel: "manifest", href: asset("manifest.json") },
     ],
   }),
@@ -61,7 +62,7 @@ export const Route = createRootRoute({
 
 function RootDocument({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
         <HeadContent />

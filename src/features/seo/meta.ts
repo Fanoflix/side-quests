@@ -17,12 +17,16 @@
  * against the domain root and 404.
  */
 
-export const SITE_URL = "https://fanoflix.github.io/webfun"
-export const SITE_NAME = "webfun"
+import { SITE_NAME } from "@/features/nav/site"
+import { toolBySlug } from "@/features/nav/tools"
 
-export const SITE_TITLE = "webfun — web stuff, no impact, just satisfying"
+export { SITE_NAME }
+
+export const SITE_URL = "https://fanoflix.github.io/webfun"
+
+export const SITE_TITLE = `${SITE_NAME} by Ammar Nasir`
 export const SITE_DESCRIPTION =
-  "Small interactive experiments in graphics, motion and speculative UI. Things that looked cool enough to rebuild."
+  "Small web experiments in graphics, motion and UI. Each one comes with a short, plain-English explanation of how it works."
 
 /** 1200×630 — the size every unfurl crops to. */
 export const OG_IMAGE = `${SITE_URL}/og.png`
@@ -40,6 +44,7 @@ export type PageMetaOptions = {
   path?: string
   /** Alt text for the card image. */
   imageAlt?: string
+  image?: string
 }
 
 /**
@@ -54,6 +59,7 @@ export function pageMeta({
   description,
   path = "",
   imageAlt,
+  image = OG_IMAGE,
 }: PageMetaOptions): Meta[] {
   const url = `${SITE_URL}${path}`
   const documentTitle = path ? `${title} — ${SITE_NAME}` : title
@@ -67,7 +73,7 @@ export function pageMeta({
     { property: "og:title", content: title },
     { property: "og:description", content: description },
     { property: "og:url", content: url },
-    { property: "og:image", content: OG_IMAGE },
+    { property: "og:image", content: image },
     { property: "og:image:width", content: OG_IMAGE_WIDTH },
     { property: "og:image:height", content: OG_IMAGE_HEIGHT },
     { property: "og:image:alt", content: imageAlt ?? title },
@@ -75,7 +81,18 @@ export function pageMeta({
     { name: "twitter:card", content: "summary_large_image" },
     { name: "twitter:title", content: title },
     { name: "twitter:description", content: description },
-    { name: "twitter:image", content: OG_IMAGE },
+    { name: "twitter:image", content: image },
     { name: "twitter:image:alt", content: imageAlt ?? title },
   ]
+}
+
+export function toolMeta(slug: string): Meta[] {
+  const tool = toolBySlug(slug)
+  return pageMeta({
+    title: tool.title,
+    description: tool.description,
+    path: tool.to,
+    image: `${SITE_URL}/og/${tool.slug}.png`,
+    imageAlt: `${tool.title}: ${tool.hook}`,
+  })
 }

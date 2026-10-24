@@ -27,7 +27,7 @@ export function WordWheel({
 }: WordWheelProps) {
   const canRemove = words.length > 1
   return (
-    <div className="relative h-full w-full overflow-hidden border border-border [mask-image:linear-gradient(to_bottom,transparent,black_50%,black_55%,transparent)]">
+    <div className="relative h-full w-full overflow-hidden [mask-image:linear-gradient(to_bottom,transparent,black_50%,black_55%,transparent)]">
       <motion.div
         className="absolute inset-x-0 top-1/2 flex flex-col"
         animate={{ y: -index * ROW_H - ROW_H }}
