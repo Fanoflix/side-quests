@@ -57,11 +57,12 @@ export const NET_GRID = "grid grid-cols-[1fr_auto_auto] items-baseline gap-x-3"
  *
  * `SelectTrigger` is already `w-fit`, so the chevron sits right after the value
  * once no width is forced on it — the fixed widths were what pushed it out to
- * the edge. The underline goes too: inside the app these read as inline
- * properties on a record, not as form fields. The focus ring is deliberately
- * left intact, since it's the only thing marking the control for keyboard use.
+ * the edge. The border goes too: inside the app these read as inline
+ * properties on a record, not as form fields. The hover tint stays as the cue
+ * that it's clickable, and the focus ring is deliberately left intact, since
+ * it's the only thing marking the control for keyboard use.
  */
-export const BARE_SELECT = "w-auto border-b-transparent"
+export const BARE_SELECT = "w-auto border-transparent px-1.5"
 
 /**
  * Ticket status colours: blue for in-flight, green for finished — the scheme
