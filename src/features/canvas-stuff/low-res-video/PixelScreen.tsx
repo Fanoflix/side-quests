@@ -244,7 +244,7 @@ export const PixelScreen = memo(function PixelScreen({
     <div ref={outerRef} className="flex w-full justify-center">
       <div
         className="relative select-none"
-        style={{ width: screenW, height: screenW / aspect }}
+        style={{ width: `min(100%, ${screenW}px)`, aspectRatio: aspect }}
       >
         <canvas ref={canvasRef} className="block h-full w-full" />
         {/*

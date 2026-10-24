@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react"
 
+import { useToolStage } from "@/components/stage/useToolStage"
 import { useCompare } from "@/hooks/useCompare"
 import type { Region } from "@/components/loupe/region"
 import type { AACanvasHandle } from "./AACanvas"
@@ -23,6 +24,8 @@ const DEFAULT_ZOOM = 6.9
 // Fixed on-screen size; the working buffer is scaled up (pixelated) to fill it,
 // which is what makes the jaggies visible.
 const DISPLAY_W = 720
+const MIN_DISPLAY_W = 240
+const STAGE_GUTTER = 64
 
 // Side of the (square) loupe canvas, in device pixels.
 const LOUPE_SIZE = 288
@@ -50,7 +53,7 @@ const workDims = (resolution: number) => ({
 export function useAntiAlias() {
   const [settings, setSettings] = useState<AASettings>(DEFAULT_SETTINGS)
   const compare = useCompare()
-  const [collapsed, setCollapsed] = useState(false)
+  const stage = useToolStage()
   const [animating, setAnimating] = useState(false)
   const [center, setCenter] = useState({ x: 0.5, y: 0.5 })
   const [zoomLevel, setZoomLevel] = useState(DEFAULT_ZOOM)
@@ -170,14 +173,16 @@ export function useAntiAlias() {
   const exportPng = () => canvasRef.current?.exportPng("anti-aliasing.png")
 
   // The display box keeps the scene aspect at a fixed presentation size.
-  const displayWidth = DISPLAY_W
-  const displayHeight = Math.round(DISPLAY_W / SCENE_ASPECT)
+  const displayWidth = stage.width
+    ? Math.max(MIN_DISPLAY_W, Math.min(DISPLAY_W, stage.width - STAGE_GUTTER))
+    : DISPLAY_W
+  const displayHeight = Math.round(displayWidth / SCENE_ASPECT)
 
   return {
     settings,
     comparing: compare.comparing,
     compareLatched: compare.latched,
-    collapsed,
+    stage,
     animating,
     region,
     zoomLevel,
@@ -190,7 +195,6 @@ export function useAntiAlias() {
     setCompareLatched: compare.setLatched,
     startPeek: compare.startPeek,
     endPeek: compare.endPeek,
-    setCollapsed,
     setAnimating,
     setRegion,
     setZoomLevel: setZoom,

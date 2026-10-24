@@ -1,6 +1,6 @@
 import type { Ref } from "react"
 
-import { Panel } from "@/components/floating-panels/FloatingPanels"
+import { Panel } from "@/components/stage/Panel"
 
 /**
  * The loupe window: a magnified, nearest-neighbour view of the selected region
@@ -29,15 +29,13 @@ export function ZoomBox({
         />
         {disabled && (
           <div className="absolute inset-0 grid place-items-center">
-            <p className="text-xs tracking-widest text-white/40 uppercase">
-              {placeholder}
-            </p>
+            <p className="text-xs text-white/40">{placeholder}</p>
           </div>
         )}
       </div>
 
       <label className="flex items-center gap-3">
-        <span className="w-20 shrink-0 text-xs font-semibold tracking-widest text-muted-foreground uppercase">
+        <span className="w-20 shrink-0 text-xs text-muted-foreground">
           Zoom
         </span>
         <input

@@ -46,15 +46,16 @@ src/
     <slug>.tsx             # one per tool
   features/
     <category>/<slug>/     # the tools themselves — see "Anatomy of a tool"
-    sidebar/               # nav data + sidebar UI + ⌘K search
-    home/                  # home index cards
-    flags/                 # staged-release gating
+    nav/                   # tools.ts (the tool list), top bar, left ghost list, ⌘K quest finder, prev/next
+    home/                  # landing page + the live card previews
+    explainers/            # renders each tool's explainer.md under the tool
+    seo/                   # page meta + the dev-only /og/<slug> card used by `yarn og`
     theme/                 # dark/light toggle + no-flash init script
-    motion/eases.ts        # shared easing curves
+    motion/eases.ts        # shared easing curves, incl. NumberFlow's default curve
   components/
     ui/                    # shadcn primitives — generated, don't hand-restyle
     layout/                # AppLayout, ToolIntro/IntroLink
-    floating-panels/       # FloatingPanels + Panel: the top-right control stack
+    stage/                 # ToolStage (display area; controls portal into the right rail, or a bottom sheet below xl), Panel, Range
     loupe/                 # reusable zoom-loupe (ZoomBox, ZoomSelection, useRegionDrag)
   lib/utils.ts             # `cn()`
   styles.css               # Tailwind import + the whole oklch theme token set
@@ -69,7 +70,7 @@ Tool categories that exist today (`features/<category>/`):
   `concept-chat`
 
 A genuinely new kind of entry may warrant a new category folder — but check with
-the user first; the categories double as the sidebar's group labels.
+the user first; the categories double as the group labels in the left list.
 
 ## Anatomy of a tool
 
@@ -85,7 +86,8 @@ features/canvas-stuff/dithering/
   DitherCanvas.tsx    # view
   Controls.tsx        # view
   StatsPanel.tsx      # view
-  how-it-works.md     # the explainer (required)
+  explainer.md        # the ELI5 explainer shown under the tool (required)
+  how-it-works.md     # the full technical write-up, linked from the explainer
   short-demo.md       # the reel script
 ```
 
@@ -142,14 +144,28 @@ Corollaries the user cares about, and will call out:
    export const Route = createFileRoute("/<slug>")({ component: Thing })
    ```
    `routeTree.gen.ts` regenerates itself when the dev server runs.
-3. **Nav entry** — add to the right group in `src/features/sidebar/nav-items.ts`:
-   `title`, `to`, `icon` (lucide), `blurb` (the home-card teaser), and
-   `keywords` (hidden search aliases — jargon and synonyms a person might type
-   that don't appear in the title).
-4. **Page meta** — give the route a `head()` via `pageMeta` from
-   `src/features/seo/meta.ts`, and add the path to `PRERENDERED_PATHS` in
-   `vite.config.ts`. Without both, the page has no unfurl and deep links 404.
-5. **`how-it-works.md`** — in the feature folder. Non-optional; see below.
+3. **Tool entry** — add it to `tools` in `src/features/nav/tools.ts`: `slug`,
+   `to`, `title`, `icon` (lucide), `category`, `hook` (one plain sentence, used
+   on the page, the card and the unfurl), `description` (the unfurl body),
+   `added`, and `keywords` (hidden search aliases). Its position in the array is
+   its quest number and its place in prev/next. Add a card preview to
+   `PREVIEWS` in `features/home/Previews.tsx`.
+4. **Page meta** — give the route `head: () => ({ meta: toolMeta("<slug>") })`
+   from `src/features/seo/meta.ts`, add the path to `PRERENDERED_PATHS` in
+   `vite.config.ts`, and run `yarn og` with the dev server up to regenerate
+   `public/og/<slug>.png`. Without these the page has no unfurl and deep links
+   404.
+5. **`explainer.md` and `how-it-works.md`** — in the feature folder.
+   Non-optional; see below.
+
+## explainer.md — the on-page version
+
+Rendered under every tool by `features/explainers`. The first line is a `#`
+heading and becomes the section's hook, so make it a sentence worth reading on
+its own and different from the page's intro. After that: explain it like the
+reader is twelve. Short sections, plain words, the tool's real numbers, a "Try
+this" pointing at an actual control, and a last-line link to the full
+`how-it-works.md` on GitHub.
 
 ## how-it-works.md — the format
 
@@ -174,8 +190,12 @@ Check these first — rebuilding one of them is the most common wasted work:
 
 - `ToolIntro` / `IntroLink` (`components/layout/ToolIntro.tsx`) — the title +
   blurb every tool page opens with. `children` is a node so blurbs can link out.
-- `FloatingPanels` / `Panel` (`components/floating-panels/`) — the fixed
-  top-right stack of control windows, collapsible as a unit.
+- `ToolStage` + `useToolStage` (`components/stage/`) — the display area every
+  visual tool sits in. Its controls are portalled into the right-hand rail that
+  `AppLayout` renders for tools with `controls: true` in `tools.ts` (a Settings
+  bottom sheet below 1280px). Pass the controls as a fragment of `Panel`s;
+  `stage.width` is the measured display width for sizing canvases. `Range` is
+  the shared slider row.
 - `components/loupe/*` — shared zoom-loupe. The *magnification logic* stays in
   each feature's own hook; only the view pieces are shared.
 - `features/motion/eases.ts` — shared easing curves.

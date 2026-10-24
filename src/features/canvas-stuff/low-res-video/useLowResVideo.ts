@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from "react"
 
+import { useToolStage } from "@/components/stage/useToolStage"
+
 import type { ScreenSettings } from "./Controls"
 import type { DotShape, PixelScreenHandle } from "./PixelScreen"
 import { useVideoFrames } from "./useVideoFrames"
@@ -23,7 +25,10 @@ const clamp = (n: number, min: number, max: number) =>
  * frame-grab loop that feeds the {@link PixelScreen}. The view binds `videoRef`
  * and `screenRef` and renders the rest — it holds no logic of its own.
  */
+const DEFAULT_CLIP = `${import.meta.env.BASE_URL.replace(/\/+$/, "")}/low-res-default.mp4`
+
 export function useLowResVideo() {
+  const stage = useToolStage()
   const [settings, setSettings] = useState<ScreenSettings>(DEFAULT_SETTINGS)
   const [shape, setShape] = useState<DotShape>("circle")
   const [hasVideo, setHasVideo] = useState(false)
@@ -137,16 +142,24 @@ export function useLowResVideo() {
     })
   }
 
-  const pickFile = (file: File) => {
+  const playSource = (src: string) => {
     const video = videoRef.current
     if (!video) return
-    if (urlRef.current) URL.revokeObjectURL(urlRef.current)
-    const url = URL.createObjectURL(file)
-    urlRef.current = url
-    video.src = url
+    video.src = src
     void video.play().catch(() => {})
     setHasVideo(true)
     setCurrentTime(0)
+  }
+
+  useEffect(() => {
+    playSource(DEFAULT_CLIP)
+  }, [])
+
+  const pickFile = (file: File) => {
+    if (urlRef.current) URL.revokeObjectURL(urlRef.current)
+    const url = URL.createObjectURL(file)
+    urlRef.current = url
+    playSource(url)
   }
 
   const seek = (time: number) => {
@@ -177,6 +190,7 @@ export function useLowResVideo() {
   }
 
   return {
+    stage,
     settings,
     shape,
     hasVideo,

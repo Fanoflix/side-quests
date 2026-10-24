@@ -29,10 +29,7 @@ function FutureTableCellImpl({ cell }: { cell: RenderCell }) {
             "tabular-nums",
             cell.isEmpty && cell.getEmptyClassName()
           )}
-          duration={0.3}
-          stagger={0}
-          exit={{ duration: 0 }}
-          rollDistance={0.2}
+          maxSteps={4}
           trend="down"
         />
       ) : (

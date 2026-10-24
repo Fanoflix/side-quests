@@ -1,9 +1,12 @@
 import { useState } from "react"
+import type { KeyboardEvent } from "react"
 
+import { useToolStage } from "@/components/stage/useToolStage"
+import { EASES, resolveEase } from "../eases"
 import type { EaseKey } from "../eases"
-import { DEFAULT_EASE_KEY, resolveEase } from "../eases"
+import { graphemes } from "./engine"
+import type { Trend } from "./engine"
 
-/** Words the wheel starts with; users can add or remove any of them. */
 export const BASE_WORDS = [
   "departures",
   "delayed",
@@ -16,101 +19,172 @@ export const BASE_WORDS = [
   "The Lich King",
 ]
 
-/** Arbitrary sentences to scroll through — they share words so runs slide while
- * the rest reflow. */
-export const SENTENCES = [
-  "the quick brown fox jumps over the lazy dog",
-  "the lazy dog sleeps under the quick brown fox",
-  "she sells sea shells by the sea shore",
-  "we sailed past the shore into the open sea",
-  "a journey of a thousand miles begins with one step",
-  "all that glitters is not gold my friend",
-]
+export const SAMPLES = {
+  hello: [
+    "Hello",
+    "Bonjour",
+    "Hola",
+    "Ciao",
+    "Hallo",
+    "Olá",
+    "Merhaba",
+    "Salaam",
+  ],
+  ui: ["Copy", "Copied", "Save", "Saving…", "Saved", "Follow", "Following"],
+  sentences: [
+    "the quick brown fox jumps over the lazy dog",
+    "the lazy dog sleeps under the quick brown fox",
+    "she sells sea shells by the sea shore",
+    "we sailed past the shore into the open sea",
+    "a journey of a thousand miles begins with one step",
+    "all that glitters is not gold my friend",
+  ],
+  price: ["$1,024", "$980", "$12,300", "$47", "$8,675", "$309"],
+} as const
 
-/** Prices to scroll through. */
-export const PRICES = ["$1,024", "$980", "$12,300", "$47", "$8,675", "$309"]
-
-/** Which list the preview scrolls through. */
-export type Mode = "words" | "sentences" | "price"
+export type Mode = "words" | keyof typeof SAMPLES
 
 export const MODES: { key: Mode; label: string }[] = [
   { key: "words", label: "Words" },
+  { key: "hello", label: "Hello" },
+  { key: "ui", label: "UI labels" },
   { key: "sentences", label: "Sentences" },
   { key: "price", label: "Price" },
 ]
 
-/** All demo state: the live value, the active mode, and the editable Words list. */
+const BASE_SIZE_REM = { words: 4.5, sentences: 1.75 } as const
+const GLYPH_WIDTH_EM = 0.58
+
+export const PACKAGE_TAGLINES = [
+  "Coming soon to npm",
+  "One component for React",
+  "NumberFlow's timing built in",
+  "Any word, not just numbers",
+]
+
+export type Timing = {
+  duration: number
+  easeKey: EaseKey
+  slideDuration: number
+  fadeDuration: number
+  stagger: number
+  maxSteps: number
+  trend: Trend
+}
+
+export const NUMBER_FLOW_TIMING: Timing = {
+  duration: 0.9,
+  easeKey: "numberFlow",
+  slideDuration: 0.9,
+  fadeDuration: 0.45,
+  stagger: 0,
+  maxSteps: 8,
+  trend: "auto",
+}
+
+export const TRENDS: { value: Trend; label: string }[] = [
+  { value: "auto", label: "Auto" },
+  { value: "up", label: "Up" },
+  { value: "down", label: "Down" },
+]
+
 export function useCharacterFlowDemo() {
   const [mode, setMode] = useState<Mode>("words")
   const [words, setWords] = useState<string[]>(BASE_WORDS)
-  const [wordIndex, setWordIndex] = useState(0)
-  const [sentenceIndex, setSentenceIndex] = useState(0)
-  const [priceIndex, setPriceIndex] = useState(0)
+  const [indexes, setIndexes] = useState<Record<Mode, number>>({
+    words: 0,
+    hello: 0,
+    ui: 0,
+    sentences: 0,
+    price: 0,
+  })
   const [value, setValue] = useState<string>(BASE_WORDS[0])
-  const [easeKey, setEaseKey] = useState<EaseKey>(DEFAULT_EASE_KEY)
+  const [draft, setDraft] = useState("")
+  const [timing, setTiming] = useState<Timing>(NUMBER_FLOW_TIMING)
+  const stage = useToolStage()
 
-  /** Advance to the next item in the active list (fired by clicking the preview). */
-  const advance = () => {
-    if (mode === "words") {
-      const next = (wordIndex + 1) % words.length
-      setWordIndex(next)
-      setValue(words[next])
-    } else if (mode === "sentences") {
-      const next = (sentenceIndex + 1) % SENTENCES.length
-      setSentenceIndex(next)
-      setValue(SENTENCES[next])
-    } else {
-      const next = (priceIndex + 1) % PRICES.length
-      setPriceIndex(next)
-      setValue(PRICES[next])
-    }
+  const updateTiming = (patch: Partial<Timing>) =>
+    setTiming((prev) => ({ ...prev, ...patch }))
+  const resetTiming = () => setTiming(NUMBER_FLOW_TIMING)
+  const isDefaultTiming = (Object.keys(timing) as (keyof Timing)[]).every(
+    (key) => timing[key] === NUMBER_FLOW_TIMING[key]
+  )
+  const listFor = (key: Mode): readonly string[] =>
+    key === "words" ? words : SAMPLES[key]
+
+  const goTo = (key: Mode, index: number) => {
+    setIndexes((prev) => ({ ...prev, [key]: index }))
+    setValue(listFor(key)[index])
   }
 
-  /** Switch lists, immediately showing that list's current item. */
+  const advance = () => {
+    const list = listFor(mode)
+    goTo(mode, (indexes[mode] + 1) % list.length)
+  }
+
+  const onPreviewKey = (event: KeyboardEvent) => {
+    if (event.key !== "Enter" && event.key !== " ") return
+    event.preventDefault()
+    advance()
+  }
+
   const selectMode = (next: Mode) => {
     setMode(next)
-    if (next === "words") setValue(words[wordIndex])
-    else if (next === "sentences") setValue(SENTENCES[sentenceIndex])
-    else setValue(PRICES[priceIndex])
+    setValue(listFor(next)[indexes[next]])
   }
 
-  const selectWord = (index: number) => {
-    setWordIndex(index)
-    setValue(words[index])
-  }
+  const selectWord = (index: number) => goTo("words", index)
 
-  const addWord = (word: string) => {
-    const trimmed = word.trim()
+  const addWord = () => {
+    const trimmed = draft.trim()
     if (!trimmed) return
     const next = [...words, trimmed]
     setWords(next)
-    setWordIndex(next.length - 1)
+    setDraft("")
+    setIndexes((prev) => ({ ...prev, words: next.length - 1 }))
     setValue(trimmed)
   }
 
   const removeWord = (index: number) => {
-    if (words.length <= 1) return // never empty the wheel
+    if (words.length <= 1) return
     const next = words.filter((_, i) => i !== index)
-    const adjusted = index < wordIndex ? wordIndex - 1 : wordIndex
-    const clamped = Math.min(adjusted, next.length - 1)
+    const current = indexes.words
+    const clamped = Math.min(
+      index < current ? current - 1 : current,
+      next.length - 1
+    )
     setWords(next)
-    setWordIndex(clamped)
+    setIndexes((prev) => ({ ...prev, words: clamped }))
     setValue(next[clamped])
   }
 
+  const isSentence = mode === "sentences"
+  const base = isSentence ? BASE_SIZE_REM.sentences : BASE_SIZE_REM.words
+  const length = Math.max(1, graphemes(value).length)
+  const fontSize = `min(${base}rem, calc(100cqi / ${(length * GLYPH_WIDTH_EM).toFixed(2)}))`
+
   return {
+    stage,
+    timing,
+    updateTiming,
+    resetTiming,
+    isDefaultTiming,
+    eases: EASES,
     value,
     setValue,
     mode,
     selectMode,
     words,
-    wordIndex,
+    wordIndex: indexes.words,
     advance,
+    onPreviewKey,
     selectWord,
+    draft,
+    setDraft,
     addWord,
     removeWord,
-    easeKey,
-    setEaseKey,
-    ease: resolveEase(easeKey),
+    ease: resolveEase(timing.easeKey),
+    isSentence,
+    fontSize,
   }
 }

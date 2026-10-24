@@ -1,4 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react"
+import { useSearch } from "@tanstack/react-router"
+
+import { useToolStage } from "@/components/stage/useToolStage"
 
 import type { EaseKey } from "../eases"
 import { DEFAULT_EASE_KEY, resolveEase } from "../eases"
@@ -62,9 +65,75 @@ export const STYLE_FLOW_DEFAULTS: StyleFlowDefaults = {
   active: { weight: true, slant: true, family: true, size: true },
 }
 
-/** All demo state: the text, which tracks play, the cooldown, and the looping. */
+export type PresetKey = "shimmer" | "breathing" | "ransom" | "wave"
+
+type Preset = {
+  key: PresetKey
+  label: string
+  tracks: TrackName[]
+  cooldown: number
+  trackPick: TrackPick
+  easeKey: EaseKey
+  stepInterval: number
+  stepDuration: number
+}
+
+export const PRESETS: Preset[] = [
+  {
+    key: "shimmer",
+    label: "Shimmer",
+    tracks: ["weight", "slant", "family", "size"],
+    cooldown: 1,
+    trackPick: "random",
+    easeKey: DEFAULT_EASE_KEY,
+    stepInterval: 0.13,
+    stepDuration: 0.04,
+  },
+  {
+    key: "breathing",
+    label: "Breathing",
+    tracks: ["weight"],
+    cooldown: 1,
+    trackPick: "roundRobin",
+    easeKey: "smooth",
+    stepInterval: 0.45,
+    stepDuration: 0.4,
+  },
+  {
+    key: "ransom",
+    label: "Ransom note",
+    tracks: ["weight", "slant", "family", "size"],
+    cooldown: 1,
+    trackPick: "random",
+    easeKey: "expoOut",
+    stepInterval: 0.07,
+    stepDuration: 0.02,
+  },
+  {
+    key: "wave",
+    label: "Wave",
+    tracks: ["weight", "size"],
+    cooldown: 1,
+    trackPick: "roundRobin",
+    easeKey: "springy",
+    stepInterval: 0.2,
+    stepDuration: 0.18,
+  },
+]
+
+const COPIED_MS = 1600
+
+function fitSize(text: string) {
+  const length = Math.max(4, Array.from(text).length)
+  return Math.round(Math.min(96, Math.max(36, 760 / length)))
+}
+
 export function useStyleFlowDemo() {
-  const [value, setValue] = useState(STYLE_FLOW_DEFAULTS.value)
+  const search = useSearch({ from: "/style-flow" })
+  const [value, setValue] = useState(search.text ?? STYLE_FLOW_DEFAULTS.value)
+  const [preset, setPreset] = useState<PresetKey | null>("shimmer")
+  const [copied, setCopied] = useState(false)
+  const stage = useToolStage()
   const [, setSampleIndex] = useState(0)
   const [seed, setSeed] = useState(STYLE_FLOW_DEFAULTS.seed)
   const [playToken, setPlayToken] = useState(0)
@@ -122,28 +191,73 @@ export function useStyleFlowDemo() {
     return () => clearInterval(id)
   }, [looping, duration])
 
+  const applyPreset = (key: PresetKey) => {
+    const next = PRESETS.find((p) => p.key === key)
+    if (!next) return
+    setPreset(key)
+    setActive({
+      weight: next.tracks.includes("weight"),
+      slant: next.tracks.includes("slant"),
+      family: next.tracks.includes("family"),
+      size: next.tracks.includes("size"),
+    })
+    setCooldown(next.cooldown)
+    setTrackPick(next.trackPick)
+    setEaseKey(next.easeKey)
+    setStepInterval(next.stepInterval)
+    setStepDuration(next.stepDuration)
+    replay()
+  }
+
+  const copyLink = () => {
+    const url = new URL(window.location.href)
+    url.searchParams.set("text", value)
+    navigator.clipboard
+      .writeText(url.toString())
+      .then(() => {
+        setCopied(true)
+        setTimeout(() => setCopied(false), COPIED_MS)
+      })
+      .catch(() => setCopied(false))
+  }
+
+  const size = fitSize(value)
+
+  const custom =
+    <T>(set: (next: T) => void) =>
+    (next: T) => {
+      setPreset(null)
+      set(next)
+    }
+
   return {
+    stage,
     value,
     setValue,
+    preset,
+    applyPreset,
+    copied,
+    copyLink,
+    size,
     seed,
     playToken,
     cooldown,
-    setCooldown,
+    setCooldown: custom(setCooldown),
     duration,
     setDuration,
     stepInterval,
-    setStepInterval,
+    setStepInterval: custom(setStepInterval),
     stepDuration,
-    setStepDuration,
+    setStepDuration: custom(setStepDuration),
     trackPick,
-    setTrackPick,
+    setTrackPick: custom(setTrackPick),
     easeKey,
-    setEaseKey,
+    setEaseKey: custom(setEaseKey),
     ease,
     looping,
     setLooping,
     active,
-    toggleTrack,
+    toggleTrack: custom(toggleTrack),
     tracks,
     replay,
     nextSample,

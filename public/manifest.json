@@ -1,7 +1,7 @@
 {
-  "name": "web stuff, just satisfying, for fun",
-  "short_name": "webfun",
-  "description": "Small interactive experiments in graphics, motion and speculative UI.",
+  "name": "Side Quests",
+  "short_name": "Side Quests",
+  "description": "Small web experiments in graphics, motion and UI, each with a plain-English explanation of how it works.",
   "icons": [
     {
       "src": "favicon.svg",

@@ -1,6 +1,6 @@
 import type { ReactNode } from "react"
 import { useEffect, useState } from "react"
-import { Info, RotateCw } from "lucide-react"
+import { Check, Info, Link2, RotateCw } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -18,12 +18,15 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 import { ToolIntro } from "@/components/layout/ToolIntro"
+import { Panel } from "@/components/stage/Panel"
+import { ToolStage } from "@/components/stage/ToolStage"
 import { EASES } from "../eases"
 import { StyleFlow } from "./StyleFlow"
 import { ALL_TRACKS } from "./useStyleFlow"
 import {
   COOLDOWNS,
   PICKS,
+  PRESETS,
   TRACK_LABELS,
   useStyleFlowDemo,
 } from "./useStyleFlowDemo"
@@ -36,6 +39,7 @@ import {
  */
 export function StyleFlowDemo() {
   const {
+    stage,
     value,
     setValue,
     seed,
@@ -60,19 +64,208 @@ export function StyleFlowDemo() {
     tracks,
     replay,
     nextSample,
+    preset,
+    applyPreset,
+    copied,
+    copyLink,
+    size,
   } = useStyleFlowDemo()
 
   return (
     <TooltipProvider delay={200}>
-      <div className="flex w-full max-w-2xl flex-col gap-8">
-        <ToolIntro title="StyleFlow">
-          You'd normally keyframe this by hand in After Effects. Variable fonts
-          let the browser just… do it — every letter picking its own weight,
-          slant, serif and size, live. The one rule that keeps it from looking
-          twitchy: never change the same thing twice in a row.
+      <div className="flex w-full flex-col gap-8">
+        <ToolIntro
+          title="Style Flow"
+          hint="Type your name in the panel, pick a preset, then copy the link to send it to someone."
+        >
+          Every letter picks its own weight, slant and font, live.
         </ToolIntro>
 
-        <div className="space-y-2">
+        <ToolStage
+          stage={stage}
+          className="flex min-h-[32rem] flex-col items-center justify-center gap-10 overflow-hidden px-6 py-20"
+          controls={
+            <>
+              <Panel
+                title="Text"
+                action={
+                  <button
+                    type="button"
+                    onClick={copyLink}
+                    className="flex items-center gap-1 text-[11px] text-muted-foreground transition-colors hover:text-foreground"
+                  >
+                    {copied ? (
+                      <Check className="size-3" />
+                    ) : (
+                      <Link2 className="size-3" />
+                    )}
+                    {copied ? "Copied" : "Copy link"}
+                  </button>
+                }
+              >
+                <Input
+                  variant="filled"
+                  value={value}
+                  onChange={(e) => setValue(e.target.value)}
+                  placeholder="Type your name…"
+                  aria-label="Text to animate"
+                />
+              </Panel>
+              <Panel title="Presets">
+                <div className="grid grid-cols-2 gap-1.5">
+                  {PRESETS.map(({ key, label }) => (
+                    <Button
+                      key={key}
+                      size="sm"
+                      variant={preset === key ? "default" : "outline"}
+                      aria-pressed={preset === key}
+                      onClick={() => applyPreset(key)}
+                    >
+                      {label}
+                    </Button>
+                  ))}
+                </div>
+              </Panel>
+              <Panel title="Settings">
+                <div className="flex flex-col gap-4">
+                  <ConfigRow
+                    label="Tracks"
+                    hint="Which style dimensions may change. Switch one off to pin it at its resting value for the whole run."
+                  >
+                    {ALL_TRACKS.map((track) => (
+                      <Button
+                        key={track}
+                        size="sm"
+                        variant={active[track] ? "default" : "outline"}
+                        aria-pressed={active[track]}
+                        onClick={() => toggleTrack(track)}
+                      >
+                        {TRACK_LABELS[track]}
+                      </Button>
+                    ))}
+                  </ConfigRow>
+
+                  <ConfigRow
+                    label="Cooldown"
+                    hint="Turns a track must sit out after it changes before it may change again. 1 means a track can never change twice in a row."
+                  >
+                    {COOLDOWNS.map((c) => (
+                      <Button
+                        key={c}
+                        size="sm"
+                        variant={cooldown === c ? "default" : "outline"}
+                        aria-pressed={cooldown === c}
+                        onClick={() => setCooldown(c)}
+                      >
+                        {c}
+                      </Button>
+                    ))}
+                  </ConfigRow>
+
+                  <ConfigRow
+                    label="Order"
+                    hint="How the next track is chosen each turn — a random eligible track, or strict round-robin through them."
+                  >
+                    {PICKS.map(({ key, label }) => (
+                      <Button
+                        key={key}
+                        size="sm"
+                        variant={trackPick === key ? "default" : "outline"}
+                        aria-pressed={trackPick === key}
+                        onClick={() => setTrackPick(key)}
+                      >
+                        {label}
+                      </Button>
+                    ))}
+                  </ConfigRow>
+
+                  <ConfigRow
+                    label="Easing"
+                    hint="The easing curve applied to each track transition. Overshoot curves (Springy, Elastic, Bounce) pop past the target and settle back on every change."
+                  >
+                    <Select
+                      value={easeKey}
+                      onValueChange={(v) => v !== null && setEaseKey(v)}
+                    >
+                      <SelectTrigger
+                        size="sm"
+                        className="w-40"
+                        aria-label="Easing"
+                      >
+                        <SelectValue>
+                          {(v) =>
+                            EASES.find((e) => e.key === v)?.label ?? String(v)
+                          }
+                        </SelectValue>
+                      </SelectTrigger>
+                      <SelectContent>
+                        {EASES.map(({ key, label }) => (
+                          <SelectItem key={key} value={key}>
+                            {label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </ConfigRow>
+
+                  <ConfigRow
+                    label="Duration"
+                    hint="Total run length in seconds. The animation is finite — it plays once and settles back to the resting style."
+                  >
+                    <NumberField
+                      value={duration}
+                      onCommit={setDuration}
+                      min={0.5}
+                      step={0.5}
+                      suffix="sec"
+                      ariaLabel="Duration in seconds"
+                    />
+                  </ConfigRow>
+
+                  <ConfigRow
+                    label="Step interval"
+                    hint="Seconds between the start of a character's consecutive turns — the gap between changes. Lower is busier."
+                  >
+                    <NumberField
+                      value={stepInterval}
+                      onCommit={setStepInterval}
+                      step={0.05}
+                      suffix="sec"
+                      ariaLabel="Step interval in seconds"
+                    />
+                  </ConfigRow>
+
+                  <ConfigRow
+                    label="Step duration"
+                    hint="Seconds one track's transition takes. Keep it at or below the step interval so changes don't overlap."
+                  >
+                    <NumberField
+                      value={stepDuration}
+                      onCommit={setStepDuration}
+                      step={0.05}
+                      suffix="sec"
+                      ariaLabel="Step duration in seconds"
+                    />
+                  </ConfigRow>
+
+                  <ConfigRow
+                    label="Loop"
+                    hint="Replays the finite run on a timer so the preview keeps shimmering. The component itself never loops — this is the demo re-triggering it."
+                  >
+                    <Button
+                      size="sm"
+                      variant={looping ? "default" : "outline"}
+                      aria-pressed={looping}
+                      onClick={() => setLooping((v) => !v)}
+                    >
+                      {looping ? "On" : "Off"}
+                    </Button>
+                  </ConfigRow>
+                </div>
+              </Panel>
+            </>
+          }
+        >
           <div
             role="button"
             tabIndex={0}
@@ -83,7 +276,7 @@ export function StyleFlowDemo() {
                 nextSample()
               }
             }}
-            className="flex min-h-44 cursor-pointer items-center justify-center overflow-hidden border border-border px-6 py-10 select-none"
+            className="flex w-full cursor-pointer items-center justify-center select-none focus-visible:outline-none"
           >
             <StyleFlow
               value={value}
@@ -97,163 +290,17 @@ export function StyleFlowDemo() {
               stepDuration={stepDuration}
               ease={ease}
               weights={[100, 200, 300, 400, 500, 600, 700, 800, 900]}
-              sizeRange={[32, 62]}
+              sizeRange={[Math.round(size * 0.7), Math.round(size * 1.15)]}
               stagger={0}
-              restStyle={{ weight: 500, family: "sans", size: 50 }}
-              className="tracking-[-0.45rem]"
+              restStyle={{ weight: 500, family: "sans", size }}
+              className="tracking-[-0.04em]"
             />
           </div>
-          <p className="text-center text-[10px] font-normal tracking-widest text-muted-foreground">
-            Click the preview to shuffle the word
-          </p>
-        </div>
-
-        <div className="space-y-4">
-          <div className="flex gap-2">
-            <Input
-              variant="filled"
-              value={value}
-              onChange={(e) => setValue(e.target.value)}
-              placeholder="Type to animate…"
-              aria-label="Text to animate"
-            />
-            <Button variant="outline" onClick={replay} aria-label="Replay">
-              <RotateCw />
-              Replay
-            </Button>
-          </div>
-
-          {/* One config per line — label + info hint on the left, control on the right. */}
-          <div className="divide-y divide-border border border-border">
-            <ConfigRow
-              label="Tracks"
-              hint="Which style dimensions may change. Switch one off to pin it at its resting value for the whole run."
-            >
-              {ALL_TRACKS.map((track) => (
-                <Button
-                  key={track}
-                  size="sm"
-                  variant={active[track] ? "default" : "outline"}
-                  aria-pressed={active[track]}
-                  onClick={() => toggleTrack(track)}
-                >
-                  {TRACK_LABELS[track]}
-                </Button>
-              ))}
-            </ConfigRow>
-
-            <ConfigRow
-              label="Cooldown"
-              hint="Turns a track must sit out after it changes before it may change again. 1 means a track can never change twice in a row."
-            >
-              {COOLDOWNS.map((c) => (
-                <Button
-                  key={c}
-                  size="sm"
-                  variant={cooldown === c ? "default" : "outline"}
-                  aria-pressed={cooldown === c}
-                  onClick={() => setCooldown(c)}
-                >
-                  {c}
-                </Button>
-              ))}
-            </ConfigRow>
-
-            <ConfigRow
-              label="Order"
-              hint="How the next track is chosen each turn — a random eligible track, or strict round-robin through them."
-            >
-              {PICKS.map(({ key, label }) => (
-                <Button
-                  key={key}
-                  size="sm"
-                  variant={trackPick === key ? "default" : "outline"}
-                  aria-pressed={trackPick === key}
-                  onClick={() => setTrackPick(key)}
-                >
-                  {label}
-                </Button>
-              ))}
-            </ConfigRow>
-
-            <ConfigRow
-              label="Easing"
-              hint="The easing curve applied to each track transition. Overshoot curves (Springy, Elastic, Bounce) pop past the target and settle back on every change."
-            >
-              <Select
-                value={easeKey}
-                onValueChange={(v) => v !== null && setEaseKey(v)}
-              >
-                <SelectTrigger size="sm" className="w-40" aria-label="Easing">
-                  <SelectValue>
-                    {(v) => EASES.find((e) => e.key === v)?.label ?? String(v)}
-                  </SelectValue>
-                </SelectTrigger>
-                <SelectContent>
-                  {EASES.map(({ key, label }) => (
-                    <SelectItem key={key} value={key}>
-                      {label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </ConfigRow>
-
-            <ConfigRow
-              label="Duration"
-              hint="Total run length in seconds. The animation is finite — it plays once and settles back to the resting style."
-            >
-              <NumberField
-                value={duration}
-                onCommit={setDuration}
-                min={0.5}
-                step={0.5}
-                suffix="sec"
-                ariaLabel="Duration in seconds"
-              />
-            </ConfigRow>
-
-            <ConfigRow
-              label="Step interval"
-              hint="Seconds between the start of a character's consecutive turns — the gap between changes. Lower is busier."
-            >
-              <NumberField
-                value={stepInterval}
-                onCommit={setStepInterval}
-                step={0.05}
-                suffix="sec"
-                ariaLabel="Step interval in seconds"
-              />
-            </ConfigRow>
-
-            <ConfigRow
-              label="Step duration"
-              hint="Seconds one track's transition takes. Keep it at or below the step interval so changes don't overlap."
-            >
-              <NumberField
-                value={stepDuration}
-                onCommit={setStepDuration}
-                step={0.05}
-                suffix="sec"
-                ariaLabel="Step duration in seconds"
-              />
-            </ConfigRow>
-
-            <ConfigRow
-              label="Loop"
-              hint="Replays the finite run on a timer so the preview keeps shimmering. The component itself never loops — this is the demo re-triggering it."
-            >
-              <Button
-                size="sm"
-                variant={looping ? "default" : "outline"}
-                aria-pressed={looping}
-                onClick={() => setLooping((v) => !v)}
-              >
-                {looping ? "On" : "Off"}
-              </Button>
-            </ConfigRow>
-          </div>
-        </div>
+          <Button variant="outline" size="sm" onClick={replay}>
+            <RotateCw />
+            Replay
+          </Button>
+        </ToolStage>
       </div>
     </TooltipProvider>
   )
@@ -337,9 +384,9 @@ function ConfigRow({
   children: ReactNode
 }) {
   return (
-    <div className="flex items-center justify-between gap-4 px-4 py-3">
+    <div className="flex flex-col gap-2">
       <div className="flex items-center gap-1.5">
-        <span className="text-xs font-medium tracking-wider text-muted-foreground uppercase">
+        <span className="text-xs font-medium text-muted-foreground">
           {label}
         </span>
         <Tooltip>
@@ -354,7 +401,7 @@ function ConfigRow({
           </TooltipContent>
         </Tooltip>
       </div>
-      <div className="flex flex-wrap justify-end gap-1.5">{children}</div>
+      <div className="flex flex-wrap gap-1.5">{children}</div>
     </div>
   )
 }

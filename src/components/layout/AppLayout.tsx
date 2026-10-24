@@ -1,54 +1,65 @@
-import type { CSSProperties } from "react"
 import { Outlet } from "@tanstack/react-router"
 
-import {
-  SidebarInset,
-  SidebarProvider,
-  SidebarTrigger,
-  useSidebar,
-} from "@/components/ui/sidebar"
-import { AppSidebar } from "@/features/sidebar/AppSidebar"
-import { WebfunMark } from "@/features/sidebar/WebfunMark"
-
-/**
- * The toggle lives *inside* the sidebar while it's open; this one shows in the
- * main header only when the sidebar is collapsed (or on mobile, where the panel
- * is an off-screen sheet) so there's always a way back to it.
- */
-function InsetSidebarTrigger() {
-  const { state, isMobile } = useSidebar()
-  if (!isMobile && state !== "collapsed") return null
-  return (
-    // The shortcut hint rides along here because this is exactly when it's worth
-    // knowing: the search field it jumps to isn't on screen to advertise itself.
-    <div className="group flex items-center gap-4">
-      <SidebarTrigger />
-
-      {/* With the rail away this is the only thing still identifying the site,
-          so it sits at the end of the row rather than disappearing with it. */}
-      <WebfunMark className="size-4 shrink-0 text-muted-foreground" />
-    </div>
-  )
-}
+import { QuestMenu } from "@/features/nav/QuestMenu"
+import { SiteFooter } from "@/features/nav/SiteFooter"
+import { ToolFooter } from "@/features/nav/ToolFooter"
+import { ToolList } from "@/features/nav/ToolList"
+import { QuestMenuContext } from "@/features/nav/questMenuContext"
+import { TopBar } from "@/features/nav/TopBar"
+import { RailContext } from "@/components/stage/railContext"
+import { cn } from "@/lib/utils"
+import { useAppLayout } from "./useAppLayout"
 
 export function AppLayout() {
+  const { nav, menu, openMenu, rail, setRail } = useAppLayout()
+
   return (
-    // Zero the reserved gap so the floating sidebar overlays content instead of
-    // pushing it — no layout shift; the fixed container just floats on top.
-    // Widen the track so the p-12 float-margin still leaves a comfortable card.
-    <SidebarProvider
-      className="[&_[data-slot=sidebar-gap]]:w-0"
-      style={{ "--sidebar-width": "18rem" } as CSSProperties}
-    >
-      <AppSidebar />
-      <SidebarInset>
-        <header className="flex h-9 shrink-0 items-center gap-2 px-3">
-          <InsetSidebarTrigger />
-        </header>
-        <main className="flex flex-1 items-center justify-center p-6">
-          <Outlet />
-        </main>
-      </SidebarInset>
-    </SidebarProvider>
+    <QuestMenuContext value={openMenu}>
+      <div className="flex min-h-svh flex-col">
+        <TopBar {...nav} onSearch={openMenu} />
+        <div className="flex-1">
+          {nav.current && nav.prev && nav.next ? (
+            <div
+              className={cn(
+                "mx-auto grid w-full max-w-[1480px] gap-10 px-4 py-8 sm:px-6 sm:py-10 lg:grid-cols-[10rem_minmax(0,1fr)] xl:gap-12",
+                nav.current.controls &&
+                  "xl:grid-cols-[10rem_minmax(0,1fr)_19rem]"
+              )}
+            >
+              <aside className="hidden lg:block">
+                <ToolList current={nav.current} />
+              </aside>
+              <RailContext value={rail}>
+                <div className="min-w-0">
+                  <main className="flex flex-col">
+                    <Outlet />
+                  </main>
+                  <ToolFooter
+                    tool={nav.current}
+                    prev={nav.prev}
+                    next={nav.next}
+                  />
+                </div>
+              </RailContext>
+              {nav.current.controls && (
+                <aside className="hidden xl:block">
+                  <div
+                    key={nav.current.slug}
+                    ref={setRail}
+                    className="tool-rail sticky top-24 flex max-h-[calc(100svh-7.5rem)] flex-col overflow-x-hidden overflow-y-auto overscroll-contain pr-1"
+                  />
+                </aside>
+              )}
+            </div>
+          ) : (
+            <main className="flex flex-col items-center px-4 py-8 sm:px-6 sm:py-10">
+              <Outlet />
+            </main>
+          )}
+        </div>
+        <SiteFooter />
+        <QuestMenu {...menu} />
+      </div>
+    </QuestMenuContext>
   )
 }

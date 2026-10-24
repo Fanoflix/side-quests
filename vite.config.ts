@@ -42,7 +42,7 @@ const config = defineConfig(({ command }) => ({
   base: process.env.VITE_BASE ?? (command === "build" ? "/webfun/" : "/"),
   resolve: { tsconfigPaths: true },
   plugins: [
-    devtools(),
+    devtools({ consolePiping: { enabled: false } }),
     tailwindcss(),
     // Static SPA build: no server at runtime. A shell is prerendered at build
     // time and the client router takes over, which is all GitHub Pages can host.

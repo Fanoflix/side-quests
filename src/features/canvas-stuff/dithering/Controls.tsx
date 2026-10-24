@@ -12,7 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { Panel } from "@/components/floating-panels/FloatingPanels"
+import { Panel } from "@/components/stage/Panel"
 import {
   ALGORITHM_GROUPS,
   COLOR_MODES,
@@ -32,7 +32,6 @@ type Props = {
   onExport: () => void
   comparing: boolean
   onComparingChange: (comparing: boolean) => void
-  onCollapse: () => void
 }
 
 export function Controls({
@@ -43,13 +42,12 @@ export function Controls({
   onExport,
   comparing,
   onComparingChange,
-  onCollapse,
 }: Props) {
   const fileRef = useRef<HTMLInputElement>(null)
   const grayscale = settings.colorMode === "grayscale"
 
   return (
-    <Panel title="Controls" onCollapse={onCollapse}>
+    <Panel title="Controls">
       <div className="flex gap-2">
         <Button className="flex-1" onClick={() => fileRef.current?.click()}>
           <ImagePlus />
@@ -129,9 +127,7 @@ export function Controls({
       />
 
       <label className="flex cursor-pointer items-center justify-between gap-2 select-none">
-        <span className="text-xs font-semibold tracking-widest text-muted-foreground uppercase">
-          Invert
-        </span>
+        <span className="text-xs text-muted-foreground">Invert</span>
         <input
           type="checkbox"
           checked={settings.invert}
@@ -160,9 +156,7 @@ function SelectField<T extends string>({
 
   return (
     <div className="flex items-center justify-between gap-2">
-      <span className="text-xs font-semibold tracking-widest text-muted-foreground uppercase">
-        {label}
-      </span>
+      <span className="text-xs text-muted-foreground">{label}</span>
       <Select value={value} onValueChange={(v) => onChange(v as T)}>
         <SelectTrigger size="sm" className="w-44 text-xs">
           <SelectValue>{current}</SelectValue>
@@ -203,7 +197,7 @@ function Range({
 }) {
   return (
     <label className="flex items-center gap-3">
-      <span className="w-20 shrink-0 text-xs font-semibold tracking-widest text-muted-foreground uppercase">
+      <span className="w-20 shrink-0 text-xs text-muted-foreground">
         {label}
       </span>
       <input

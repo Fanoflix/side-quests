@@ -1,7 +1,9 @@
-import { useRef, useState } from "react"
-import { Minus, Plus, Upload } from "lucide-react"
+import { useRef } from "react"
+import { Upload } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
+import { Panel } from "@/components/stage/Panel"
+import { Range } from "@/components/stage/Range"
 import type { DotShape } from "./PixelScreen"
 
 export type ScreenSettings = {
@@ -35,37 +37,9 @@ export function Controls({
   onPickFile,
 }: Props) {
   const fileRef = useRef<HTMLInputElement>(null)
-  const [collapsed, setCollapsed] = useState(false)
-
-  if (collapsed) {
-    return (
-      <button
-        type="button"
-        onClick={() => setCollapsed(false)}
-        aria-label="Expand controls"
-        className="fixed top-4 right-4 z-50 grid size-9 place-items-center border border-border bg-background text-muted-foreground shadow-lg hover:text-foreground"
-      >
-        <Plus className="size-4" />
-      </button>
-    )
-  }
 
   return (
-    <div className="fixed top-4 right-4 z-50 flex w-80 flex-col gap-3 border border-border bg-background p-3 shadow-lg">
-      <div className="flex items-center justify-between">
-        <span className="text-xs font-semibold tracking-widest text-muted-foreground uppercase">
-          Controls
-        </span>
-        <button
-          type="button"
-          onClick={() => setCollapsed(true)}
-          aria-label="Collapse controls"
-          className="text-muted-foreground hover:text-foreground"
-        >
-          <Minus className="size-4" />
-        </button>
-      </div>
-
+    <Panel title="Controls">
       <div className="flex gap-2">
         <Button className="flex-1" onClick={() => fileRef.current?.click()}>
           <Upload />
@@ -116,9 +90,7 @@ export function Controls({
       />
 
       <label className="flex cursor-pointer items-center justify-between gap-2 select-none">
-        <span className="text-xs font-semibold tracking-widest text-muted-foreground uppercase">
-          Keep aspect ratio
-        </span>
+        <span className="text-xs text-muted-foreground">Keep aspect ratio</span>
         <input
           type="checkbox"
           checked={lockAspect}
@@ -128,9 +100,7 @@ export function Controls({
       </label>
 
       <label className="flex items-center justify-between gap-2">
-        <span className="text-xs font-semibold tracking-widest text-muted-foreground uppercase">
-          Shape
-        </span>
+        <span className="text-xs text-muted-foreground">Shape</span>
         <select
           value={shape}
           onChange={(e) => onShapeChange(e.target.value as DotShape)}
@@ -143,45 +113,6 @@ export function Controls({
           ))}
         </select>
       </label>
-    </div>
-  )
-}
-
-function Range({
-  label,
-  value,
-  min,
-  max,
-  step = 1,
-  unit,
-  onChange,
-}: {
-  label: string
-  value: number
-  min: number
-  max: number
-  step?: number
-  unit?: string
-  onChange: (value: number) => void
-}) {
-  return (
-    <label className="flex items-center gap-3">
-      <span className="w-20 shrink-0 text-xs font-semibold tracking-widest text-muted-foreground uppercase">
-        {label}
-      </span>
-      <input
-        type="range"
-        min={min}
-        max={max}
-        step={step}
-        value={value}
-        onChange={(e) => onChange(e.target.valueAsNumber)}
-        className="h-1 flex-1 cursor-pointer accent-primary"
-      />
-      <span className="w-10 shrink-0 text-right text-xs text-foreground tabular-nums">
-        {value}
-        {unit}
-      </span>
-    </label>
+    </Panel>
   )
 }

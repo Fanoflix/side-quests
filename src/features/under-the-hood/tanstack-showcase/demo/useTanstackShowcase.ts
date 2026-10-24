@@ -1,7 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react"
 
-import { useSidebar } from "@/components/ui/sidebar"
-
 import { createEventBus } from "../engine/events"
 import { createServer, DEFAULT_SERVER_CONFIG } from "../engine/server"
 import type { ServerConfig } from "../engine/server"
@@ -71,15 +69,6 @@ export function useTanstackShowcase() {
   const flows = useEventStream(bus)
   const timeline = useTimeline(flows, rung)
   const architecture = useArchitecture(flows, rung)
-
-  /**
-   * The site's sidebar *floats over* content rather than pushing it (the shared
-   * layout zeroes the reserved gap on purpose). Every other tool is centred and
-   * narrow, so it never notices. This page is full-bleed, so it has to reserve
-   * the rail's track itself or the app window hides underneath it.
-   */
-  const { state, isMobile } = useSidebar()
-  const railOffset = !isMobile && state === "expanded"
 
   const select = useCallback(
     (id: number) => {
@@ -235,7 +224,6 @@ export function useTanstackShowcase() {
     clearLog: () => bus.clear(),
     resetDemo,
     resetKey,
-    railOffset,
     latestEvent: flows.at(-1)?.events.at(-1),
     attachFlows,
   }

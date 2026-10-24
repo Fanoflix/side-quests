@@ -14,13 +14,15 @@ export function ConceptChatDemo() {
     // thread. So this page pins its own height, and every flex level below it
     // carries `min-h-0` so the overflow lands on the message list.
     //
-    // 6rem is the shell's header (h-12) plus main's vertical padding (p-6). The
-    // one place this feature is coupled to AppLayout's chrome.
-    <div className="mx-auto flex h-[calc(100svh-6rem)] min-h-0 w-full max-w-5xl min-w-0 flex-col gap-4 self-stretch overflow-hidden">
-      <ToolIntro title="Concept chat">
-        Some jokes are all timing, and the only way to land one over text is to
-        record a video of yourself typing it. Which is absurd — it's a message.
-        So what if the message knew how it was meant to be read?
+    // The top bar (h-14), the column's top padding (pt-8, pt-10 from sm) and a
+    // 24px gap at the bottom. The one place this feature is coupled to
+    // AppLayout's chrome.
+    <div className="flex h-[calc(100svh-7rem)] min-h-96 w-full min-w-0 flex-col gap-6 self-stretch overflow-hidden sm:h-[calc(100svh-7.5rem)]">
+      <ToolIntro
+        title="Concept chat"
+        hint="Press play on the message to see it typed out the way it was sent. Then write your own."
+      >
+        What if a text message kept the timing of how you typed it?
       </ToolIntro>
 
       <ChatFrame />

@@ -2,28 +2,28 @@ import type { ReactNode } from "react"
 
 import { cn } from "@/lib/utils"
 
-/**
- * The title + blurb every tool page opens with. `children` is a node rather than
- * a string so a blurb can link out to whatever inspired the tool.
- */
 export function ToolIntro({
   title,
   children,
+  hint,
   className,
 }: {
   title: string
   children: ReactNode
+  hint?: ReactNode
   className?: string
 }) {
   return (
-    <div className={cn("space-y-1", className)}>
-      <h1 className="text-lg font-semibold tracking-tight">{title}</h1>
-      <p className="text-sm text-pretty text-muted-foreground">{children}</p>
+    <div className={cn("space-y-2", className)}>
+      <h1 className="text-xs text-muted-foreground">{title}</h1>
+      <p className="text-2xl font-medium tracking-tight text-balance sm:text-3xl">
+        {children}
+      </p>
+      {hint && <p className="text-sm text-muted-foreground">{hint}</p>}
     </div>
   )
 }
 
-/** An inline link inside a tool blurb (e.g. the project that inspired it). */
 export function IntroLink({
   href,
   children,
@@ -36,7 +36,7 @@ export function IntroLink({
       href={href}
       target="_blank"
       rel="noreferrer"
-      className="text-foreground underline decoration-muted-foreground/50 underline-offset-4 transition-colors hover:decoration-foreground"
+      className="underline decoration-muted-foreground/50 underline-offset-4 transition-colors duration-175 ease-snap hover:decoration-foreground"
     >
       {children}
     </a>

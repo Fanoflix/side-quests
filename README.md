@@ -1,15 +1,12 @@
-# webfun
+# Side Quests
 
-Fun little things for the web.
-
-Somethings might become the future, who knows. Never hurts to experiment.
+Small web things that roll, dither, glow and shimmer.
 
 **[fanoflix.github.io/webfun](https://fanoflix.github.io/webfun/)**
 
-Small, self-contained interactive experiments — graphics techniques, motion
-studies, speculative UI. Each one lives at its own route and ships an explainer
-doc next to its code, because the point is to understand the thing, not just
-watch it.
+Small, self-contained interactive experiments: graphics techniques, motion
+studies and speculative UI. Each one lives at its own route and comes with a
+short, plain-English explanation of how it works, shown right under the tool.
 
 ## Running it
 

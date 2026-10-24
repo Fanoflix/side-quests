@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react"
 
+import { useToolStage } from "@/components/stage/useToolStage"
 import { useCompare } from "@/hooks/useCompare"
 import type { Region } from "@/components/loupe/region"
 import type { DitherCanvasHandle } from "./DitherCanvas"
@@ -19,6 +20,8 @@ const DEFAULT_SETTINGS: DitherSettings = {
 // full source resolution — the loupe is how you inspect it pixel-for-pixel).
 const MAX_DISPLAY_W = 900
 const MAX_DISPLAY_H = 600
+const MIN_DISPLAY_W = 240
+const STAGE_GUTTER = 64
 
 // Side of the (square) loupe canvas, in device pixels.
 const LOUPE_SIZE = 288
@@ -77,7 +80,7 @@ export function useDither() {
   const [settings, setSettings] = useState<DitherSettings>(DEFAULT_SETTINGS)
   const [source, setSource] = useState<Source | null>(null)
   const compare = useCompare()
-  const [collapsed, setCollapsed] = useState(false)
+  const stage = useToolStage()
   const [stats, setStats] = useState<DitherStats | null>(null)
   // Normalised centre of the loupe selection; the square region is derived from
   // this plus the zoom (which fixes the side length).
@@ -252,7 +255,15 @@ export function useDither() {
 
   // Fit the result inside the display box, preserving the source aspect.
   const aspect = source ? source.w / source.h : 16 / 9
-  let displayW = source ? Math.min(MAX_DISPLAY_W, MAX_DISPLAY_H * aspect) : 640
+  const maxW = stage.width
+    ? Math.max(
+        MIN_DISPLAY_W,
+        Math.min(MAX_DISPLAY_W, stage.width - STAGE_GUTTER)
+      )
+    : MAX_DISPLAY_W
+  let displayW = source
+    ? Math.min(maxW, MAX_DISPLAY_H * aspect)
+    : Math.min(640, maxW)
   let displayH = displayW / aspect
   if (displayH > MAX_DISPLAY_H) {
     displayH = MAX_DISPLAY_H
@@ -265,7 +276,7 @@ export function useDither() {
     stats,
     comparing: compare.comparing,
     compareLatched: compare.latched,
-    collapsed,
+    stage,
     region,
     zoomLevel,
     canvasRef,
@@ -278,7 +289,6 @@ export function useDither() {
     setCompareLatched: compare.setLatched,
     startPeek: compare.startPeek,
     endPeek: compare.endPeek,
-    setCollapsed,
     setRegion,
     setZoomLevel: setZoom,
   }

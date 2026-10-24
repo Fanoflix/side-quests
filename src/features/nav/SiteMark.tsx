@@ -21,7 +21,7 @@ import markSvg from "../../../public/favicon.svg?raw"
  */
 const INLINE_MARK = markSvg.replace(/<style[\s\S]*?<\/style>/g, "")
 
-export function WebfunMark({ className = "" }: { className?: string }) {
+export function SiteMark({ className = "" }: { className?: string }) {
   return (
     <span
       aria-hidden

@@ -1,4 +1,4 @@
-import { Panel } from "@/components/floating-panels/FloatingPanels"
+import { Panel } from "@/components/stage/Panel"
 import type { DitherStats } from "./useDither"
 
 export function StatsPanel({ stats }: { stats: DitherStats | null }) {
@@ -32,9 +32,7 @@ function Row({
 }) {
   return (
     <div className="flex items-center justify-between gap-2">
-      <dt className="font-semibold tracking-widest text-muted-foreground uppercase">
-        {label}
-      </dt>
+      <dt className="text-muted-foreground">{label}</dt>
       <dd
         className={`tabular-nums ${highlight ? "text-primary" : "text-foreground"}`}
       >
