@@ -125,7 +125,7 @@ function TablePreview() {
               <td className="py-2 text-muted-foreground">{flight}</td>
               <td className="py-2">{city}</td>
               <td className="py-2 text-right">
-                <CharacterFlow value={statuses[i]} trend="down" maxSteps={4} />
+                <CharacterFlow value={statuses[i]} maxSteps={4} />
               </td>
             </tr>
           ))}

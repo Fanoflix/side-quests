@@ -8,6 +8,7 @@ export type FlowTiming = {
   fadeDuration: number
   fadeEasing: string
   stagger: number
+  delay: number
   trend: Trend
   maxSteps: number
   animate: boolean
@@ -65,7 +66,11 @@ function lcsPairs(a: string[], b: string[]): [number, number][] {
   return pairs
 }
 
-function stableAnchors(pairs: [number, number][]): [number, number][] {
+function stableAnchors(
+  pairs: [number, number][],
+  aLength: number,
+  bLength: number
+): [number, number][] {
   const runs: [number, number][][] = []
   for (const pair of pairs) {
     const run = runs.at(-1)
@@ -76,9 +81,9 @@ function stableAnchors(pairs: [number, number][]): [number, number][] {
       runs.push([pair])
     }
   }
-  return runs
-    .filter((run) => run.length > 1 || Math.abs(run[0][0] - run[0][1]) <= 1)
-    .flat()
+  const staysPut = ([ai, bi]: [number, number]) =>
+    Math.abs(ai - bi) <= 1 || Math.abs(aLength - ai - (bLength - bi)) <= 1
+  return runs.filter((run) => run.length > 1 || staysPut(run[0])).flat()
 }
 
 function pairGap(
@@ -104,7 +109,7 @@ function pairGap(
 
 export function alignChars(a: string[], b: string[]): FlowOp[] {
   const fromEnd = NUMERIC.test(a.join("")) && NUMERIC.test(b.join(""))
-  const anchors = stableAnchors(lcsPairs(a, b))
+  const anchors = stableAnchors(lcsPairs(a, b), a.length, b.length)
   const ops: FlowOp[] = []
   let i = 0
   let j = 0
@@ -205,6 +210,8 @@ export class FlowEngine {
   private slots: Slot[] = []
   private readonly exiting = new Set<Slot>()
   private value: string | null = null
+  private target: string | null = null
+  private pending: ReturnType<typeof setTimeout> | undefined
 
   constructor(root: HTMLElement) {
     this.root = root
@@ -227,12 +234,25 @@ export class FlowEngine {
   }
 
   destroy() {
+    clearTimeout(this.pending)
     this.root.getAnimations({ subtree: true }).forEach((a) => a.cancel())
     this.label.remove()
     this.line.remove()
   }
 
   update(value: string, timing: FlowTiming) {
+    if (value === this.target) return
+    this.target = value
+    clearTimeout(this.pending)
+    if (timing.delay > 0 && timing.animate && this.value !== null) {
+      this.pending = setTimeout(() => this.apply(value, timing), timing.delay)
+    } else {
+      this.apply(value, timing)
+    }
+  }
+
+  private apply(value: string, timing: FlowTiming) {
+    this.pending = undefined
     if (value === this.value) return
     const animate = timing.animate && this.value !== null
     this.value = value
@@ -345,8 +365,8 @@ export class FlowEngine {
         }
       )
       slot.reel.animate([{ opacity: 0 }, { opacity: 1 }], {
-        duration: timing.fadeDuration,
-        easing: timing.fadeEasing,
+        duration: timing.duration,
+        easing: timing.easing,
         delay,
         fill: "backwards",
       })

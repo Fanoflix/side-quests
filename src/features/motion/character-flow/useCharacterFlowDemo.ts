@@ -58,7 +58,7 @@ const GLYPH_WIDTH_EM = 0.58
 export const PACKAGE_TAGLINES = [
   "Coming soon to npm",
   "One component for React",
-  "NumberFlow's timing built in",
+  "Springy out of the box",
   "Any word, not just numbers",
 ]
 
@@ -72,13 +72,13 @@ export type Timing = {
   trend: Trend
 }
 
-export const NUMBER_FLOW_TIMING: Timing = {
-  duration: 0.9,
-  easeKey: "numberFlow",
-  slideDuration: 0.9,
-  fadeDuration: 0.45,
+export const DEFAULT_TIMING: Timing = {
+  duration: 0.5,
+  easeKey: "spring",
+  slideDuration: 0.5,
+  fadeDuration: 0.5,
   stagger: 0,
-  maxSteps: 8,
+  maxSteps: 6,
   trend: "auto",
 }
 
@@ -100,14 +100,14 @@ export function useCharacterFlowDemo() {
   })
   const [value, setValue] = useState<string>(BASE_WORDS[0])
   const [draft, setDraft] = useState("")
-  const [timing, setTiming] = useState<Timing>(NUMBER_FLOW_TIMING)
+  const [timing, setTiming] = useState<Timing>(DEFAULT_TIMING)
   const stage = useToolStage()
 
   const updateTiming = (patch: Partial<Timing>) =>
     setTiming((prev) => ({ ...prev, ...patch }))
-  const resetTiming = () => setTiming(NUMBER_FLOW_TIMING)
+  const resetTiming = () => setTiming(DEFAULT_TIMING)
   const isDefaultTiming = (Object.keys(timing) as (keyof Timing)[]).every(
-    (key) => timing[key] === NUMBER_FLOW_TIMING[key]
+    (key) => timing[key] === DEFAULT_TIMING[key]
   )
   const listFor = (key: Mode): readonly string[] =>
     key === "words" ? words : SAMPLES[key]

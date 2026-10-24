@@ -108,7 +108,7 @@ export function CharacterFlowDemo() {
                   className="flex items-center gap-1 text-[11px] text-muted-foreground transition-colors hover:text-foreground disabled:opacity-40"
                 >
                   <RotateCcw className="size-3" />
-                  NumberFlow defaults
+                  Reset
                 </button>
               }
             >
@@ -131,7 +131,7 @@ export function CharacterFlowDemo() {
                 onChange={(slideDuration) => updateTiming({ slideDuration })}
               />
               <Range
-                label="Fade"
+                label="Fade out"
                 value={timing.fadeDuration}
                 min={0.05}
                 max={1.5}

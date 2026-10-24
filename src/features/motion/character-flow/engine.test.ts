@@ -44,11 +44,21 @@ describe("alignChars", () => {
   })
 
   it("never drags a lone letter across the word", () => {
-    const ops = alignChars(split("delayed"), split("boarding"))
+    const prev = "delayed"
+    const next = "boarding"
+    const ops = alignChars(split(prev), split(next))
     for (const op of ops) {
-      if (op.type === "keep")
-        expect(Math.abs(op.from - op.to)).toBeLessThanOrEqual(1)
+      if (op.type !== "keep") continue
+      const fromStart = Math.abs(op.from - op.to)
+      const fromEnd = Math.abs(prev.length - op.from - (next.length - op.to))
+      expect(Math.min(fromStart, fromEnd)).toBeLessThanOrEqual(1)
     }
+  })
+
+  it("keeps trailing punctuation as the same letter", () => {
+    expect(kept("roll.", "dither.")).toContain(".")
+    const ops = alignChars(split("roll."), split("dither."))
+    expect(ops).toContainEqual({ type: "keep", from: 4, to: 6 })
   })
 
   it("rolls changed letters in place instead of replacing them", () => {
