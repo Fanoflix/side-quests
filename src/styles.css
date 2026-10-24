@@ -145,6 +145,9 @@
     }
   html {
     @apply font-sans;
+    scrollbar-gutter: stable;
+    scrollbar-color: color-mix(in oklch, var(--foreground) 22%, transparent)
+      var(--background);
     }
 }
 @keyframes preview-wipe {

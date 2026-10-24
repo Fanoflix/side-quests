@@ -2,7 +2,7 @@ import { useLayoutEffect, useMemo, useRef } from "react"
 import type { Easing } from "motion/react"
 import { useReducedMotion } from "motion/react"
 
-import { numberFlowEase, toCssEasing } from "../eases"
+import { springOut, toCssEasing } from "../eases"
 import { FlowEngine } from "./engine"
 import type { FlowTiming, Trend } from "./engine"
 
@@ -14,6 +14,7 @@ export type CharacterFlowOptions = {
   fadeDuration?: number
   fadeEase?: Easing
   stagger?: number
+  delay?: number
   trend?: Trend
   maxSteps?: number
   animated?: boolean
@@ -23,15 +24,16 @@ export type CharacterFlowOptions = {
 export function useCharacterFlow(
   value: string,
   {
-    duration = 0.9,
-    ease = numberFlowEase,
+    duration = 0.5,
+    ease = springOut,
     slideDuration = duration,
     slideEase = ease,
-    fadeDuration = 0.45,
+    fadeDuration = 0.5,
     fadeEase = "easeOut",
     stagger = 0,
+    delay = 0,
     trend = "auto",
-    maxSteps = 8,
+    maxSteps = 6,
     animated = true,
     respectMotionPreference = true,
   }: CharacterFlowOptions
@@ -49,6 +51,7 @@ export function useCharacterFlow(
       fadeDuration: fadeDuration * 1000,
       fadeEasing: fadeEase === "easeOut" ? "ease-out" : toCssEasing(fadeEase),
       stagger: stagger * 1000,
+      delay: delay * 1000,
       trend,
       maxSteps,
       animate: animated && !(respectMotionPreference && reduce),
@@ -61,6 +64,7 @@ export function useCharacterFlow(
       fadeDuration,
       fadeEase,
       stagger,
+      delay,
       trend,
       maxSteps,
       animated,

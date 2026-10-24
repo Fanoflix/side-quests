@@ -3,6 +3,7 @@ import { memo } from "react"
 import { cn } from "@/lib/utils"
 import { CharacterFlow } from "@/features/motion/character-flow/CharacterFlow"
 import type { RenderCell } from "../engine/types"
+import { FLIP } from "./flipTiming"
 
 /**
  * One cell. When the display resolves to a plain string — the column's empty
@@ -12,7 +13,13 @@ import type { RenderCell } from "../engine/types"
  * out. Custom (non-string) cell renderers fall back to rendering as-is.
  * `data-phase` still exposes the engine's transition phase for CSS hooks.
  */
-function FutureTableCellImpl({ cell }: { cell: RenderCell }) {
+function FutureTableCellImpl({
+  cell,
+  delay,
+}: {
+  cell: RenderCell
+  delay: number
+}) {
   const content = cell.isEmpty ? cell.emptyState.fillString : cell.render()
 
   return (
@@ -29,8 +36,8 @@ function FutureTableCellImpl({ cell }: { cell: RenderCell }) {
             "tabular-nums",
             cell.isEmpty && cell.getEmptyClassName()
           )}
-          maxSteps={4}
-          trend="down"
+          {...FLIP}
+          delay={delay}
         />
       ) : (
         content
@@ -47,6 +54,7 @@ function FutureTableCellImpl({ cell }: { cell: RenderCell }) {
 export const FutureTableCell = memo(
   FutureTableCellImpl,
   (a, b) =>
+    a.delay === b.delay &&
     a.cell.isEmpty === b.cell.isEmpty &&
     a.cell.phase === b.cell.phase &&
     a.cell.size === b.cell.size &&

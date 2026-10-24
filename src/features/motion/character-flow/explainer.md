@@ -19,7 +19,7 @@ Numbers pair up from the right, the way a price does. So **$980** turning into *
 A changed letter doesn't just swap. It spins through the alphabet from the old letter to the new one, inside its own little window that fades out at the top and bottom.
 
 - **a** to **d** passes through **b** and **c**.
-- Far-apart letters skip some steps, so it never spins through more than 8 in between.
+- Far-apart letters skip some steps, so it never spins through more than 6 in between.
 - A letter that has further to go spins faster, because it has the same amount of time to get there.
 
 That last part is the feel [NumberFlow](https://number-flow.barvian.me/) has for numbers. This does it for letters.
