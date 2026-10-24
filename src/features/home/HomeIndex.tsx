@@ -3,7 +3,7 @@ import { ArrowRight, ArrowUpRight, Search } from "lucide-react"
 
 import { CharacterFlow } from "@/features/motion/character-flow/CharacterFlow"
 import { SearchHint } from "@/features/nav/SearchHint"
-import { AUTHOR, AUTHOR_URL, SITE_NAME } from "@/features/nav/site"
+import { SITE_NAME } from "@/features/nav/site"
 import { questNumber } from "@/features/nav/tools"
 import { cn } from "@/lib/utils"
 import { PREVIEWS } from "./Previews"
@@ -40,17 +40,8 @@ export function HomeIndex() {
           <CharacterFlow value={verb} className="text-highlight" />
         </h1>
         <p className="max-w-xl text-lg text-pretty text-muted-foreground">
-          Built by{" "}
-          <a
-            href={AUTHOR_URL}
-            target="_blank"
-            rel="noreferrer"
-            className="text-foreground underline decoration-border underline-offset-4 transition-colors hover:decoration-foreground"
-          >
-            {AUTHOR}
-          </a>{" "}
-          whenever something on the web looked too satisfying to leave alone.
-          Each one comes with a short, plain-English write-up of how it works.
+          Interactive experiments in graphics, motion and interface design. Each
+          one comes with a short, plain-English write-up of how it works.
         </p>
         <div className="flex flex-wrap gap-3">
           <Link
