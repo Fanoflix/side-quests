@@ -1,6 +1,6 @@
 # Contributing
 
-Thanks for looking. webfun is a personal collection of small interactive web
+Thanks for looking. Side Quests is a personal collection of small interactive web
 experiments, so it has a narrower scope than most repos — worth reading the
 next section before you spend time on a change.
 

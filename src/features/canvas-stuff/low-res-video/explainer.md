@@ -18,4 +18,4 @@ Every dot is drawn the exact same whole number of pixels wide, and the grid is n
 
 Lower **Columns** until you can't tell what the shape is anymore. Most people can still read it with far fewer dots than they'd guess.
 
-[The full version, with the maths](https://github.com/Fanoflix/webfun/blob/main/src/features/canvas-stuff/low-res-video/how-it-works.md)
+[The full version, with the maths](https://github.com/Fanoflix/side-quests/blob/main/src/features/canvas-stuff/low-res-video/how-it-works.md)

@@ -11,7 +11,7 @@
  */
 
 /**
- * `public/` is served from the site root, which is `/` in dev but `/webfun/` in
+ * `public/` is served from the site root, which is `/` in dev but `/side-quests/` in
  * production. `BASE_URL` carries whichever is in play, so paths are built from it
  * rather than hardcoded — the single reason this module exists at all.
  */

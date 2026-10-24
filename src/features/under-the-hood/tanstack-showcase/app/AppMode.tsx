@@ -16,7 +16,7 @@ import { TicketList } from "./TicketList"
  * column, its own detail pane — precisely so it doesn't blur into the teaching
  * apparatus around it. The `showcase-app` class swaps the shadcn tokens for a
  * neutral grey palette with a white primary and rounded controls, so everything
- * underneath stops looking like webfun without a single per-component override.
+ * underneath stops looking like Side Quests without a single per-component override.
  *
  * The only tell that anything unusual is going on is the hint bubble.
  */

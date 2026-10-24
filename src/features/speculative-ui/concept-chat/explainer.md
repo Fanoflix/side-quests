@@ -20,4 +20,4 @@ It isn't a video or a special kind of message. It's the same message as always, 
 
 Write a message, add a pause before the punchline, and play it back.
 
-[The full version, with the code](https://github.com/Fanoflix/webfun/blob/main/src/features/speculative-ui/concept-chat/how-it-works.md)
+[The full version, with the code](https://github.com/Fanoflix/side-quests/blob/main/src/features/speculative-ui/concept-chat/how-it-works.md)

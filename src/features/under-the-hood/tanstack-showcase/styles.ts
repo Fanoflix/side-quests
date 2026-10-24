@@ -46,7 +46,7 @@ export const NET_GRID = "grid grid-cols-[1fr_auto_auto] items-baseline gap-x-3"
  *
  * Kept as literal hex on purpose: the whole point is the flicker of
  * recognition, and mapping them onto the site's oklch tokens would lose it.
- * They appear nowhere else in webfun.
+ * They appear nowhere else in Side Quests.
  *
  * Only `waiting` is used for the waterfall. Chrome splits a bar into queueing /
  * waiting / download, but our fake server has a single latency with no transfer
@@ -72,7 +72,7 @@ export const BARE_SELECT = "w-auto border-b-transparent"
  * it stays visible in both themes — "white circle" in the dark one.
  *
  * Literal hex rather than theme tokens because these are semantic to the fake
- * product, not to webfun, and the app runs on a deliberately colourless grey
+ * product, not to Side Quests, and the app runs on a deliberately colourless grey
  * palette so these are the only hues in it.
  */
 export const STATUS_COLOR: Record<"in-progress" | "done", string> = {

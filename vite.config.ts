@@ -5,7 +5,7 @@ import viteReact from "@vitejs/plugin-react"
 import tailwindcss from "@tailwindcss/vite"
 
 /**
- * GitHub Pages serves this repo as a *project site* at `/webfun/`, so production
+ * GitHub Pages serves this repo as a *project site* at `/side-quests/`, so production
  * builds need that prefix on every asset URL; dev stays at the root. Override
  * with `VITE_BASE` (e.g. `VITE_BASE=/` if this ever moves to a custom domain).
  *
@@ -16,7 +16,7 @@ import tailwindcss from "@tailwindcss/vite"
  * Every route that gets its own prerendered HTML file.
  *
  * Without this the build emits only the SPA shell, and a deep link like
- * `/webfun/dithering` is served by `404.html` — which works for a person (the
+ * `/side-quests/dithering` is served by `404.html` — which works for a person (the
  * client router picks the URL up) but carries a 404 status, so a crawler treats
  * it as missing and renders no unfurl at all. Since the site is shared far more
  * often than it is browsed to, that made every tool link unpostable.
@@ -39,7 +39,7 @@ const PRERENDERED_PATHS = [
 ]
 
 const config = defineConfig(({ command }) => ({
-  base: process.env.VITE_BASE ?? (command === "build" ? "/webfun/" : "/"),
+  base: process.env.VITE_BASE ?? (command === "build" ? "/side-quests/" : "/"),
   resolve: { tsconfigPaths: true },
   plugins: [
     devtools({ consolePiping: { enabled: false } }),
@@ -50,7 +50,7 @@ const config = defineConfig(({ command }) => ({
     // Pages serves it as the site root.
     tanstackStart({
       // `crawlLinks: false`: the shell's sidebar links every route, and the
-      // crawler follows them *with* the `/webfun/` base still attached, so each
+      // crawler follows them *with* the `/side-quests/` base still attached, so each
       // page came out twice — once at the path we asked for and once as a
       // subfolder index. The list below is explicit; nothing needs discovering.
       spa: {
@@ -59,7 +59,7 @@ const config = defineConfig(({ command }) => ({
       },
       // `autoSubfolderIndex: false` emits `dithering.html` rather than
       // `dithering/index.html`. GitHub Pages resolves an extensionless request
-      // to the `.html` file, so `/webfun/dithering` is a direct 200 with no
+      // to the `.html` file, so `/side-quests/dithering` is a direct 200 with no
       // redirect — a redirect would work for browsers but costs a hop that some
       // unfurl crawlers don't take.
       pages: PRERENDERED_PATHS.map((path) => ({

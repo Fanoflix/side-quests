@@ -11,7 +11,7 @@ import faviconUrl from "../assets/favicon.svg?url"
 /**
  * Everything under `public/` has to be reached through the base path.
  *
- * GitHub Pages serves this as a project site at `/webfun/`, so a bare
+ * GitHub Pages serves this as a project site at `/side-quests/`, so a bare
  * `/favicon.svg` resolves against the *domain* root and 404s — which is exactly
  * what was happening, since nothing declared an icon at all and the browser was
  * falling back to requesting `/favicon.ico` for itself.

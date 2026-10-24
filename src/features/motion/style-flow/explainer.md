@@ -25,4 +25,4 @@ Without that rule, a letter might go bold, bolder, boldest, and it looks twitchy
 
 The shimmer runs for a set time and then every letter eases back to normal. The demo just starts it again so you can keep watching.
 
-[The full version, with the rules in code](https://github.com/Fanoflix/webfun/blob/main/src/features/motion/style-flow/how-it-works.md)
+[The full version, with the rules in code](https://github.com/Fanoflix/side-quests/blob/main/src/features/motion/style-flow/how-it-works.md)

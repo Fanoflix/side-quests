@@ -38,7 +38,7 @@ const MAX_ZOOM = 32
  * where naive quantisation bands worst, so the technique has something to show
  * immediately, and nothing here is anyone else's photo.
  *
- * Through the base path: on Pages the site is served from `/webfun/`, so a bare
+ * Through the base path: on Pages the site is served from `/side-quests/`, so a bare
  * `/dither-default.jpg` would resolve against the domain root.
  */
 const DEFAULT_IMAGE = `${import.meta.env.BASE_URL.replace(/\/+$/, "")}/dither-default.jpg`

@@ -2,9 +2,9 @@
 
 Drop files here. Everything in `public/` is copied to the site root verbatim, so a
 file at `public/chat-assets/gifs/shrug.gif` is served at `/chat-assets/gifs/shrug.gif`
-in dev and `/webfun/chat-assets/gifs/shrug.gif` in production.
+in dev and `/side-quests/chat-assets/gifs/shrug.gif` in production.
 
-**Never hardcode those paths.** The `/webfun/` prefix only exists in production
+**Never hardcode those paths.** The `/side-quests/` prefix only exists in production
 builds. Reference assets through the manifest in
 `src/features/speculative-ui/concept-chat/engine/assets.ts`, which prepends
 `import.meta.env.BASE_URL` for you.

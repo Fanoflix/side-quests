@@ -6227,6 +6227,59 @@ __metadata:
   languageName: node
   linkType: hard
 
+"side-quests@workspace:.":
+  version: 0.0.0-use.local
+  resolution: "side-quests@workspace:."
+  dependencies:
+    "@base-ui/react": "npm:^1.5.0"
+    "@emotion/is-prop-valid": "npm:^1.4.0"
+    "@fontsource-variable/fraunces": "npm:^5.2.9"
+    "@fontsource-variable/inter": "npm:^5.2.8"
+    "@fontsource-variable/recursive": "npm:^5.2.8"
+    "@tailwindcss/vite": "npm:^4"
+    "@tanstack/db": "npm:0.8.2"
+    "@tanstack/devtools-vite": "npm:latest"
+    "@tanstack/eslint-config": "npm:latest"
+    "@tanstack/query-db-collection": "npm:1.2.7"
+    "@tanstack/react-db": "npm:0.3.2"
+    "@tanstack/react-devtools": "npm:latest"
+    "@tanstack/react-form": "npm:1.33.5"
+    "@tanstack/react-query": "npm:5.101.4"
+    "@tanstack/react-router": "npm:latest"
+    "@tanstack/react-router-devtools": "npm:latest"
+    "@tanstack/react-router-ssr-query": "npm:latest"
+    "@tanstack/react-start": "npm:latest"
+    "@tanstack/react-table": "npm:9.1.2"
+    "@tanstack/router-core": "npm:^1.171.13"
+    "@tanstack/router-plugin": "npm:latest"
+    "@testing-library/dom": "npm:^10.4.1"
+    "@testing-library/react": "npm:^16.3.2"
+    "@types/node": "npm:^22"
+    "@types/react": "npm:^19"
+    "@types/react-dom": "npm:^19"
+    "@vitejs/plugin-react": "npm:^6"
+    class-variance-authority: "npm:^0.7.1"
+    clsx: "npm:^2.1.1"
+    eslint: "npm:^9"
+    jsdom: "npm:^28"
+    lucide-react: "npm:^1.17.0"
+    marked: "npm:^18.1.1"
+    motion: "npm:^12.42.2"
+    playwright-core: "npm:^1.64.1"
+    prettier: "npm:^3.8.3"
+    prettier-plugin-tailwindcss: "npm:^0.8.0"
+    react: "npm:^19.2.6"
+    react-dom: "npm:^19.2.6"
+    shadcn: "npm:^4.11.0"
+    tailwind-merge: "npm:^3.6.0"
+    tailwindcss: "npm:^4"
+    tw-animate-css: "npm:^1.4.0"
+    typescript: "npm:^6"
+    vite: "npm:^8"
+    vitest: "npm:^4"
+  languageName: unknown
+  linkType: soft
+
 "siginfo@npm:^2.0.0":
   version: 2.0.0
   resolution: "siginfo@npm:2.0.0"
@@ -7013,59 +7066,6 @@ __metadata:
   checksum: 10c0/64e855c47f6c8330b5436147db1c75cb7e7474d924166800e8e2aab5eb6c76aac4981a84261dd2982b3e754490900b99791c80ae1407a9fa0dcff74f82ea3a7f
   languageName: node
   linkType: hard
-
-"webfun@workspace:.":
-  version: 0.0.0-use.local
-  resolution: "webfun@workspace:."
-  dependencies:
-    "@base-ui/react": "npm:^1.5.0"
-    "@emotion/is-prop-valid": "npm:^1.4.0"
-    "@fontsource-variable/fraunces": "npm:^5.2.9"
-    "@fontsource-variable/inter": "npm:^5.2.8"
-    "@fontsource-variable/recursive": "npm:^5.2.8"
-    "@tailwindcss/vite": "npm:^4"
-    "@tanstack/db": "npm:0.8.2"
-    "@tanstack/devtools-vite": "npm:latest"
-    "@tanstack/eslint-config": "npm:latest"
-    "@tanstack/query-db-collection": "npm:1.2.7"
-    "@tanstack/react-db": "npm:0.3.2"
-    "@tanstack/react-devtools": "npm:latest"
-    "@tanstack/react-form": "npm:1.33.5"
-    "@tanstack/react-query": "npm:5.101.4"
-    "@tanstack/react-router": "npm:latest"
-    "@tanstack/react-router-devtools": "npm:latest"
-    "@tanstack/react-router-ssr-query": "npm:latest"
-    "@tanstack/react-start": "npm:latest"
-    "@tanstack/react-table": "npm:9.1.2"
-    "@tanstack/router-core": "npm:^1.171.13"
-    "@tanstack/router-plugin": "npm:latest"
-    "@testing-library/dom": "npm:^10.4.1"
-    "@testing-library/react": "npm:^16.3.2"
-    "@types/node": "npm:^22"
-    "@types/react": "npm:^19"
-    "@types/react-dom": "npm:^19"
-    "@vitejs/plugin-react": "npm:^6"
-    class-variance-authority: "npm:^0.7.1"
-    clsx: "npm:^2.1.1"
-    eslint: "npm:^9"
-    jsdom: "npm:^28"
-    lucide-react: "npm:^1.17.0"
-    marked: "npm:^18.1.1"
-    motion: "npm:^12.42.2"
-    playwright-core: "npm:^1.64.1"
-    prettier: "npm:^3.8.3"
-    prettier-plugin-tailwindcss: "npm:^0.8.0"
-    react: "npm:^19.2.6"
-    react-dom: "npm:^19.2.6"
-    shadcn: "npm:^4.11.0"
-    tailwind-merge: "npm:^3.6.0"
-    tailwindcss: "npm:^4"
-    tw-animate-css: "npm:^1.4.0"
-    typescript: "npm:^6"
-    vite: "npm:^8"
-    vitest: "npm:^4"
-  languageName: unknown
-  linkType: soft
 
 "webidl-conversions@npm:^8.0.1":
   version: 8.0.1

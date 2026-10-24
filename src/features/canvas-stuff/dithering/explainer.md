@@ -24,4 +24,4 @@ The **Bayer** settings skip the bookkeeping. They lay a fixed grid of thresholds
 
 Drop **Levels** to 2 and hold the image. That's a photo made of only two colours. Your eyes do the rest.
 
-[The full version, with the maths](https://github.com/Fanoflix/webfun/blob/main/src/features/canvas-stuff/dithering/how-it-works.md)
+[The full version, with the maths](https://github.com/Fanoflix/side-quests/blob/main/src/features/canvas-stuff/dithering/how-it-works.md)

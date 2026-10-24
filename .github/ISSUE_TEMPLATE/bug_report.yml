@@ -6,7 +6,7 @@ body:
     id: tool
     attributes:
       label: Which tool?
-      description: The name or URL, e.g. Dithering or /webfun/dithering
+      description: The name or URL, e.g. Dithering or /side-quests/dithering
     validations:
       required: true
   - type: textarea

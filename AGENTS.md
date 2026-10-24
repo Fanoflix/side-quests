@@ -3,7 +3,7 @@
 Orientation for an agent picking up work in this repo. Read this before touching
 anything; it is the fastest path from cold start to a correct first edit.
 
-## What webfun is
+## What Side Quests is
 
 A static site of small, self-contained interactive experiments — graphics
 techniques, motion studies, speculative UI concepts. Each experiment is called a
@@ -14,7 +14,7 @@ Tone of the site: playful, plain-spoken, no jargon in user-facing copy. The code
 comments are the opposite — they explain *why* a decision was made, at length,
 because the "why" is the thing a future reader can't recover.
 
-Deployed as a static SPA to GitHub Pages under the `/webfun/` base path.
+Deployed as a static SPA to GitHub Pages under the `/side-quests/` base path.
 
 ## Stack
 
@@ -22,7 +22,7 @@ Deployed as a static SPA to GitHub Pages under the `/webfun/` base path.
 |---|---|
 | Framework | TanStack Start (React 19), SPA mode — prerendered shell, client router |
 | Router | TanStack Router, **file-based**; `src/routeTree.gen.ts` is generated — never hand-edit |
-| Build | Vite 8, `base` = `/webfun/` in prod (override with `VITE_BASE`) |
+| Build | Vite 8, `base` = `/side-quests/` in prod (override with `VITE_BASE`) |
 | Styling | Tailwind v4 (CSS-first config in `src/styles.css`), shadcn on Base UI |
 | Animation | `motion` (Framer Motion v12) |
 | Icons | `lucide-react` |

@@ -2,7 +2,7 @@
 
 Small web things that roll, dither, glow and shimmer.
 
-**[fanoflix.github.io/webfun](https://fanoflix.github.io/webfun/)**
+**[fanoflix.github.io/side-quests](https://fanoflix.github.io/side-quests/)**
 
 Small, self-contained interactive experiments: graphics techniques, motion
 studies and speculative UI. Each one lives at its own route and comes with a
