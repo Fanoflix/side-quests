@@ -28,4 +28,4 @@ That last part is the feel [NumberFlow](https://number-flow.barvian.me/) has for
 
 Everything is measured once before the change and once after. Then the browser does the moving on its own, using only position and fade. Nothing is recalculated while it animates, so it holds 60 frames a second even when you click quickly.
 
-[The full version, with the matching algorithm](https://github.com/Fanoflix/webfun/blob/main/src/features/motion/character-flow/how-it-works.md)
+[The full version, with the matching algorithm](https://github.com/Fanoflix/side-quests/blob/main/src/features/motion/character-flow/how-it-works.md)

@@ -53,7 +53,7 @@ The timeline is modelled on Chrome's Network panel — Name / Status / Time, wit
 the waterfall as a hairline under each row rather than a fourth column, so the
 narrow panel stays readable. Chrome's literal palette is used for it (the
 orange TTFB bar, the red failure) because the recognition *is* the point; those
-colours appear nowhere else in webfun. Only the waiting phase is drawn: the fake
+colours appear nowhere else in Side Quests. Only the waiting phase is drawn: the fake
 server has no transfer phase, and a green "download" segment would be a number
 we don't have.
 

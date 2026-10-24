@@ -209,7 +209,7 @@ function DetailHeader({
             </SelectTrigger>
             {/* The popup is portalled to the document root, which puts it
                 *outside* `.showcase-app` — so it has to carry the scope itself
-                or it inherits webfun's palette instead of the app's. */}
+                or it inherits Side Quests' palette instead of the app's. */}
             <SelectContent className="showcase-app">
               {STATUSES.map((status) => (
                 <SelectItem key={status} value={status} className="text-xs">

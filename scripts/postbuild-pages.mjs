@@ -1,6 +1,6 @@
 // Makes the static build servable by GitHub Pages.
 //
-// 1. 404.html — Pages has no rewrite rules, so a deep link like /webfun/style-flow
+// 1. 404.html — Pages has no rewrite rules, so a deep link like /side-quests/style-flow
 //    would 404 (nothing exists at that path; only the SPA shell does). Pages
 //    serves 404.html for unknown paths, so shipping the shell as 404.html lets
 //    the client router pick the URL up and render the right route. The response

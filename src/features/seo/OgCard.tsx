@@ -63,7 +63,7 @@ function ToolCard({ tool }: { tool: Tool }) {
           </p>
         </div>
         <p className="font-mono text-base text-muted-foreground">
-          fanoflix.github.io/webfun{tool.to}
+          fanoflix.github.io/side-quests{tool.to}
         </p>
       </div>
       <div className="flex flex-1 items-center py-16 pr-16">

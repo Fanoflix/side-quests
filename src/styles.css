@@ -303,7 +303,7 @@
  * Scoped palettes for the TanStack showcase.
  *
  * The demo app inside that tool has to read as *someone else's product*, not as
- * part of webfun — otherwise the app and the teaching apparatus around it blur
+ * part of Side Quests — otherwise the app and the teaching apparatus around it blur
  * into one surface. So it gets its own neutral-grey theme with a white primary,
  * declared by redefining the same shadcn tokens inside a scope. Every component
  * underneath picks it up with no per-component overrides.
@@ -391,7 +391,7 @@
  * ...and they're opaque.
  *
  * The site's shadcn style is configured with `menuColor: default-translucent`,
- * so menus are `bg-popover/70` over a backdrop blur. That reads well on webfun's
+ * so menus are `bg-popover/70` over a backdrop blur. That reads well on Side Quests'
  * own chrome, but this menu opens over a dense list inside a *different*
  * product, where see-through is just hard to read. Scoped to the app so the
  * site's own menus keep the translucency they were designed with.

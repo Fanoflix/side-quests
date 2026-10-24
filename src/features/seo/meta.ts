@@ -13,7 +13,7 @@
  *    as spam by the third one, so every tool carries its own.
  *
  * Absolute URLs throughout: crawlers do not resolve relative paths, and the
- * site lives under a `/webfun/` base path, so a bare `/og.png` would resolve
+ * site lives under a `/side-quests/` base path, so a bare `/og.png` would resolve
  * against the domain root and 404.
  */
 
@@ -22,7 +22,7 @@ import { toolBySlug } from "@/features/nav/tools"
 
 export { SITE_NAME }
 
-export const SITE_URL = "https://fanoflix.github.io/webfun"
+export const SITE_URL = "https://fanoflix.github.io/side-quests"
 
 export const SITE_TITLE = `${SITE_NAME} by Ammar Nasir`
 export const SITE_DESCRIPTION =

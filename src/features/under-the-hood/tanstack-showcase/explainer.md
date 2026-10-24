@@ -24,4 +24,4 @@ Your edits show up instantly, before the server answers. If the server says no, 
 
 Watch the network panel on the right as you switch versions. The app looks the same each time. The number of requests and the code you'd have to write by hand both go down.
 
-[The full version, with the real numbers](https://github.com/Fanoflix/webfun/blob/main/src/features/under-the-hood/tanstack-showcase/how-it-works.md)
+[The full version, with the real numbers](https://github.com/Fanoflix/side-quests/blob/main/src/features/under-the-hood/tanstack-showcase/how-it-works.md)

@@ -22,4 +22,4 @@ Checking 16 points costs 16 times the work. That's why games give you a setting 
 
 Set **Samples** to 1 and look at the zoom box. Then drag it up one step at a time and watch the steps soften into a gradient.
 
-[The full version, with the maths](https://github.com/Fanoflix/webfun/blob/main/src/features/canvas-stuff/anti-aliasing/how-it-works.md)
+[The full version, with the maths](https://github.com/Fanoflix/side-quests/blob/main/src/features/canvas-stuff/anti-aliasing/how-it-works.md)

@@ -22,4 +22,4 @@ That's why a status can change from **Boarding** to **Delayed** while the rest o
 
 Maybe, maybe not. It's an idea. Click through the pages and see if you find it easier to keep track of where you are.
 
-[The full version, with the code](https://github.com/Fanoflix/webfun/blob/main/src/features/speculative-ui/future-table/how-it-works.md)
+[The full version, with the code](https://github.com/Fanoflix/side-quests/blob/main/src/features/speculative-ui/future-table/how-it-works.md)
