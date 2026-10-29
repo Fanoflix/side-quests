@@ -14,6 +14,7 @@ const SLUGS = [
   "future-table",
   "concept-chat",
   "tanstack-showcase",
+  "depth-dust",
 ]
 
 const FREEZE = `

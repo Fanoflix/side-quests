@@ -3,6 +3,12 @@ import { useReducedMotion } from "motion/react"
 
 import { dither } from "@/features/canvas-stuff/dithering/pipeline"
 import { render } from "@/features/canvas-stuff/anti-aliasing/raster"
+import { createField } from "@/features/canvas-stuff/depth-dust/field"
+import {
+  DEFAULT_ANGLE,
+  DEFAULT_SETTINGS,
+} from "@/features/canvas-stuff/depth-dust/defaults"
+import { loadDefaultPicture } from "@/features/canvas-stuff/depth-dust/useDepthDust"
 import { useInView } from "@/hooks/useInView"
 
 export const DITHER_IMAGE = `${import.meta.env.BASE_URL.replace(/\/+$/, "")}/dither-default.jpg`
@@ -127,6 +133,49 @@ export function useLowResPreview() {
     }
     frame = requestAnimationFrame(draw)
     return () => cancelAnimationFrame(frame)
+  }, [inView, reduce])
+
+  return { ref, canvasRef }
+}
+
+const DUST_POINTS = 65_536
+
+export function useDepthDustPreview() {
+  const { ref, inView } = useInView<HTMLDivElement>()
+  const canvasRef = useRef<HTMLCanvasElement>(null)
+  const reduce = useReducedMotion()
+
+  useEffect(() => {
+    const canvas = canvasRef.current
+    if (!canvas || !inView) return
+    const field = createField(canvas, DUST_POINTS)
+    if (!field) return
+    let frame = 0
+    let cancelled = false
+    loadDefaultPicture()
+      .then((picture) => {
+        if (cancelled) return
+        field.setPicture(picture)
+        const draw = (now: number) => {
+          field.draw({
+            time: reduce ? 0 : now / 1000,
+            driftTime: reduce ? 0 : now / 1000,
+            intro: 1,
+            settings: DEFAULT_SETTINGS,
+            light: false,
+            pan: DEFAULT_ANGLE,
+            guide: 0,
+          })
+          if (!reduce) frame = requestAnimationFrame(draw)
+        }
+        frame = requestAnimationFrame(draw)
+      })
+      .catch(() => {})
+    return () => {
+      cancelled = true
+      cancelAnimationFrame(frame)
+      field.dispose()
+    }
   }, [inView, reduce])
 
   return { ref, canvasRef }
