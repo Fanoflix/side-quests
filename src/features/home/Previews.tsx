@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils"
 import {
   DITHER_IMAGE,
   useAntiAliasPreview,
+  useDepthDustPreview,
   useDitherPreview,
   useLowResPreview,
 } from "./usePreviews"
@@ -74,6 +75,15 @@ function LowResPreview() {
   return (
     <div ref={ref} className="size-full bg-black">
       <canvas ref={canvasRef} className="size-full object-cover" />
+    </div>
+  )
+}
+
+function DepthDustPreview() {
+  const { ref, canvasRef } = useDepthDustPreview()
+  return (
+    <div ref={ref} className="size-full bg-black">
+      <canvas ref={canvasRef} className="size-full" />
     </div>
   )
 }
@@ -187,4 +197,5 @@ export const PREVIEWS: Partial<Record<string, () => ReactNode>> = {
   "future-table": TablePreview,
   "concept-chat": ChatPreview,
   "tanstack-showcase": TanstackPreview,
+  "depth-dust": DepthDustPreview,
 }

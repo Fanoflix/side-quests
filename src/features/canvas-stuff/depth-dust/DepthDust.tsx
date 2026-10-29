@@ -1,0 +1,106 @@
+import { IntroLink, ToolIntro } from "@/components/layout/ToolIntro"
+import { ToolStage } from "@/components/stage/ToolStage"
+import { FileDropZone } from "@/components/upload/FileDropZone"
+import { cn } from "@/lib/utils"
+import { Controls } from "./Controls"
+import { InstallCard } from "./InstallCard"
+import { useDepthDust } from "./useDepthDust"
+
+export function DepthDust() {
+  const {
+    settings,
+    status,
+    stage,
+    stageHeight,
+    canvasRef,
+    hasPicture,
+    aspect,
+    busy,
+    light,
+    panEnabled,
+    panSpeed,
+    driftSpeed,
+    dragging,
+    onChange,
+    pickFile,
+    replay,
+    showGuide,
+    togglePan,
+    setPanSpeed,
+    setDriftSpeed,
+    onPointerDown,
+    onPointerMove,
+    endDrag,
+  } = useDepthDust()
+
+  return (
+    <div className="flex w-full flex-col gap-8">
+      <ToolIntro
+        title="Depth Dust"
+        hint={
+          <>
+            Drag it to look around, or drop in your own picture. Inspired by{" "}
+            <IntroLink href="https://gather.be-of-dao.com">Gather</IntroLink> by
+            DAO.
+          </>
+        }
+      >
+        Half a million specks of light, each one knowing how far away it is.
+      </ToolIntro>
+
+      <ToolStage
+        stage={stage}
+        controls={
+          <Controls
+            settings={settings}
+            status={status}
+            busy={busy}
+            hasPicture={hasPicture}
+            aspect={aspect}
+            panEnabled={panEnabled}
+            panSpeed={panSpeed}
+            driftSpeed={driftSpeed}
+            onChange={onChange}
+            onPickFile={pickFile}
+            onReplay={replay}
+            onPanChange={togglePan}
+            onPanSpeedChange={setPanSpeed}
+            onDriftSpeedChange={setDriftSpeed}
+            onLineDragChange={showGuide}
+          />
+        }
+      >
+        <FileDropZone
+          accept="image/*"
+          onPick={pickFile}
+          empty={false}
+          hint="Drop a picture"
+        >
+          <canvas
+            ref={canvasRef}
+            aria-label="The picture, drawn as a cloud of moving points"
+            role="img"
+            style={{ height: stageHeight }}
+            onPointerDown={onPointerDown}
+            onPointerMove={onPointerMove}
+            onPointerUp={endDrag}
+            onPointerCancel={endDrag}
+            className={cn(
+              "block w-full",
+              panEnabled && "touch-none",
+              panEnabled && (dragging ? "cursor-grabbing" : "cursor-grab")
+            )}
+          />
+        </FileDropZone>
+      </ToolStage>
+
+      <InstallCard
+        {...settings}
+        driftSpeed={driftSpeed}
+        light={light}
+        pan={panEnabled}
+        panSpeed={panSpeed}
+      />
+    </div>
+  )
+}

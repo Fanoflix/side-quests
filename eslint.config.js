@@ -15,6 +15,11 @@ export default [
     },
   },
   {
-    ignores: ["eslint.config.js", "prettier.config.js", ".yarn/**"],
+    ignores: [
+      "eslint.config.js",
+      "prettier.config.js",
+      ".yarn/**",
+      "packages/*/dist/**",
+    ],
   },
 ]

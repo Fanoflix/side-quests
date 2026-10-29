@@ -1,0 +1,63 @@
+{
+  "name": "side-quests-lab",
+  "version": "0.1.0",
+  "description": "Small React effects from Side Quests: Depth Dust, Character Flow and Style Flow.",
+  "license": "Apache-2.0",
+  "author": "Muhammad Ammar",
+  "homepage": "https://fanoflix.github.io/side-quests/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Fanoflix/side-quests.git",
+    "directory": "packages/side-quests-lab"
+  },
+  "bugs": "https://github.com/Fanoflix/side-quests/issues",
+  "keywords": [
+    "react",
+    "animation",
+    "webgl",
+    "point cloud",
+    "depth map",
+    "particles",
+    "text animation",
+    "numberflow",
+    "variable fonts"
+  ],
+  "type": "module",
+  "sideEffects": false,
+  "files": [
+    "dist",
+    "bin"
+  ],
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/types/packages/side-quests-lab/src/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/types/packages/side-quests-lab/src/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./estimate": {
+      "types": "./dist/types/packages/side-quests-lab/src/estimate.d.ts",
+      "import": "./dist/estimate.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "bin": {
+    "side-quests-lab": "./bin/side-quests-lab.mjs"
+  },
+  "scripts": {
+    "build": "cd ../.. && yarn build:lab",
+    "prepublishOnly": "npm run build"
+  },
+  "peerDependencies": {
+    "@huggingface/transformers": ">=3.5",
+    "motion": ">=12",
+    "react": ">=18",
+    "react-dom": ">=18"
+  },
+  "peerDependenciesMeta": {
+    "@huggingface/transformers": {
+      "optional": true
+    }
+  }
+}

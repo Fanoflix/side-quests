@@ -16,7 +16,7 @@ export function PackageTeaser() {
       <div className="flex min-w-0 flex-col gap-1.5">
         <div className="flex items-center gap-2.5">
           <code className="font-mono text-sm text-muted-foreground">
-            <span className="opacity-50">$ </span>npm i character-flow
+            <span className="opacity-50">$ </span>npm i side-quests-lab
           </code>
           <span className="border border-border px-1.5 py-px text-[11px] text-muted-foreground">
             Soon
