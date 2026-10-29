@@ -43,7 +43,7 @@
     "./package.json": "./package.json"
   },
   "bin": {
-    "side-quests-lab": "./bin/side-quests-lab.mjs"
+    "side-quests-lab": "bin/side-quests-lab.mjs"
   },
   "scripts": {
     "build": "cd ../.. && yarn build:lab",
