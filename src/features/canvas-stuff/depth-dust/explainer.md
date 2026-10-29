@@ -27,6 +27,6 @@ In the dark theme, each point is a tiny light, and where lots of them pile up th
 
 ## Try this
 
-Pick **Streaks**, push **Drift** past 100 and **Drift speed** up, then drag the picture to look at the trails side on. Then drop in a photo of your own. The first one takes a moment while the depth model downloads.
+Press **Compare** to lay the flat picture over the dust and see what the depth adds. Then pick **Streaks**, push **Drift** past 100 and **Drift speed** up, then drag the picture to look at the trails side on. Then drop in a photo of your own. The first one takes a moment while the depth model downloads.
 
 [The full version, with the maths](https://github.com/Fanoflix/side-quests/blob/main/src/features/canvas-stuff/depth-dust/how-it-works.md)

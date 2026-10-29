@@ -5,6 +5,7 @@ export {
   DEFAULT_LINE,
   PARTICLES,
 } from "../../../src/features/canvas-stuff/depth-dust/field"
+export type { Pan } from "../../../src/features/canvas-stuff/depth-dust/usePan"
 export type {
   DepthMap,
   DriftLine,

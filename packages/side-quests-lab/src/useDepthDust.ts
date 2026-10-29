@@ -12,6 +12,7 @@ import {
   loadImage,
 } from "../../../src/features/canvas-stuff/depth-dust/picture"
 import { usePan } from "../../../src/features/canvas-stuff/depth-dust/usePan"
+import type { Pan } from "../../../src/features/canvas-stuff/depth-dust/usePan"
 
 /**
  * Where the depth comes from: a depth-map image URL (greyscale, white =
@@ -55,6 +56,7 @@ export function useDepthDust({
   points,
   panEnabled,
   panSpeed,
+  angle,
   playToken,
   onError,
 }: {
@@ -66,6 +68,7 @@ export function useDepthDust({
   points: number | undefined
   panEnabled: boolean
   panSpeed: number
+  angle: Pan
   playToken: number
   onError: ((error: unknown) => void) | undefined
 }) {
@@ -80,7 +83,12 @@ export function useDepthDust({
   const introStart = useRef(0)
   const driftClock = useRef(0)
   const wake = useRef(() => {})
-  const pan = usePan({ enabled: panEnabled, speed: panSpeed, wake })
+  const pan = usePan({
+    enabled: panEnabled,
+    speed: panSpeed,
+    wake,
+    initial: angle,
+  })
   // Read inside effects without making them re-run when the caller passes a
   // new inline function every render.
   const onErrorRef = useRef(onError)

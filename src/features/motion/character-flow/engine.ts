@@ -162,6 +162,7 @@ type Roll = { slot: Slot; from: string | null; to: string }
 const PAD = "0.25em"
 const LINE_HEIGHT = "1.15"
 const BLEED = "0.35em"
+const REEL_GAP = `calc(${PAD} + 0.05em)`
 const MASK = `linear-gradient(transparent, #000 ${PAD}, #000 calc(100% - ${PAD}), transparent)`
 
 function span(style: Partial<CSSStyleDeclaration>, text?: string) {
@@ -200,7 +201,10 @@ function makeSlot(char: string): Slot {
 }
 
 function glyph(char: string) {
-  return span({ display: "block", whiteSpace: "pre" }, char)
+  return span(
+    { display: "block", whiteSpace: "pre", paddingBottom: REEL_GAP },
+    char
+  )
 }
 
 export class FlowEngine {

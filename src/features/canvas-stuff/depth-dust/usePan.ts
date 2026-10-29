@@ -42,15 +42,21 @@ export function usePan({
   enabled,
   speed,
   wake,
+  initial,
 }: {
   enabled: boolean
   speed: number
   wake: RefObject<() => void>
+  /** Where the view rests before any drag, and where `reset` returns to. */
+  initial: Pan
 }) {
-  const target = useRef<Pan>({ yaw: 0, pitch: 0 })
-  const pan = useRef<Pan>({ yaw: 0, pitch: 0 })
+  const target = useRef<Pan>(initial)
+  const pan = useRef<Pan>({ ...initial })
   const dragFrom = useRef<{ x: number; y: number; pan: Pan } | null>(null)
   const [dragging, setDragging] = useState(false)
+  // Where the view settled after the last drag. State, unlike the refs above,
+  // because the snippet shows it — but it only changes when a drag ends.
+  const [angle, setAngle] = useState<Pan>(initial)
 
   const step = () => {
     const now = pan.current
@@ -94,16 +100,27 @@ export function usePan({
   }
 
   const endDrag = () => {
+    if (dragFrom.current) setAngle(target.current)
     dragFrom.current = null
     setDragging(false)
   }
 
-  /** Ease back to facing the picture straight on. */
+  /** Ease back to the resting view. */
   const reset = () => {
     endDrag()
-    target.current = { yaw: 0, pitch: 0 }
+    target.current = initial
+    setAngle(initial)
     wake.current()
   }
 
-  return { pan, step, dragging, onPointerDown, onPointerMove, endDrag, reset }
+  return {
+    pan,
+    angle,
+    step,
+    dragging,
+    onPointerDown,
+    onPointerMove,
+    endDrag,
+    reset,
+  }
 }

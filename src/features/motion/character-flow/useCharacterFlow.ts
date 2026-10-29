@@ -2,7 +2,7 @@ import { useLayoutEffect, useMemo, useRef } from "react"
 import type { Easing } from "motion/react"
 import { useReducedMotion } from "motion/react"
 
-import { springOut, toCssEasing } from "../eases"
+import { numberFlowEase, toCssEasing } from "../eases"
 import { FlowEngine } from "./engine"
 import type { FlowTiming, Trend } from "./engine"
 
@@ -25,7 +25,7 @@ export function useCharacterFlow(
   value: string,
   {
     duration = 0.5,
-    ease = springOut,
+    ease = numberFlowEase,
     slideDuration = duration,
     slideEase = ease,
     fadeDuration = 0.5,

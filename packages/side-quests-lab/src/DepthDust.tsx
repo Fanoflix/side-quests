@@ -1,6 +1,12 @@
 import type { CSSProperties } from "react"
 
-import { DEFAULT_LINE } from "../../../src/features/canvas-stuff/depth-dust/field"
+import {
+  DEFAULT_ANGLE,
+  DEFAULT_DRIFT_SPEED,
+  DEFAULT_PAN_SPEED,
+  DEFAULT_SETTINGS,
+} from "../../../src/features/canvas-stuff/depth-dust/defaults"
+import type { Pan } from "../../../src/features/canvas-stuff/depth-dust/usePan"
 import type {
   DriftLine,
   Particles,
@@ -18,27 +24,27 @@ export type DepthDustProps = {
    * `npx side-quests-lab depth picture.jpg depth.png`.
    */
   depthMap: DepthMapSource
-  /** How much the dust moves and how much blows off, 0–2. @defaultValue `0.9` */
+  /** How much the dust moves and how much blows off, 0–2. @defaultValue `0.72` */
   drift?: number
   /** Share of points thrown loose to orbit the picture, 0–1. @defaultValue `0.15` */
   splash?: number
   /** How tightly points hold their place, 0–1. @defaultValue `0.95` */
   gather?: number
-  /** How far near things push towards you, 0–1. @defaultValue `0.2` */
+  /** How far near things push towards you, 0–1. @defaultValue `0.84` */
   depth?: number
   /**
    * Past this line, the picture blows away as a plume. Two points in picture
    * space ((0, 0) top left, (1, 1) bottom right); facing from `a` to `b`, the
-   * plume goes left. @defaultValue a near-upright line across the right third
+   * plume goes left. @defaultValue a shallow diagonal blowing up and to the right
    */
   line?: DriftLine
-  /** How the plume is drawn. @defaultValue `"subtle"` */
+  /** How the plume is drawn. @defaultValue `"comets"` */
   particles?: Particles
-  /** How fast the plume travels, as a multiplier. @defaultValue `1` */
+  /** How fast the plume travels, as a multiplier. @defaultValue `3.45` */
   driftSpeed?: number
-  /** How far the plume travels, as a multiplier, 0.25–8. @defaultValue `1` */
+  /** How far the plume travels, as a multiplier, 0.25–8. @defaultValue `0.25` */
   reach?: number
-  /** How much each plume particle's direction varies, 0–1. @defaultValue `0.5` */
+  /** How much each plume particle's direction varies, 0–1. @defaultValue `0.25` */
   spread?: number
   /** How wide the band where the drift starts is, 0–1. @defaultValue `0.5` */
   softness?: number
@@ -48,6 +54,12 @@ export type DepthDustProps = {
   pan?: boolean
   /** How far a drag turns it, as a multiplier. @defaultValue `1` */
   panSpeed?: number
+  /**
+   * The view the camera rests at, in radians: yaw turns it side to side,
+   * pitch up and down. The slow sway moves around it, and turning `pan` off
+   * returns to it. @defaultValue `{ yaw: 0.45, pitch: 0.08 }`
+   */
+  angle?: Pan
   /** Point budget. Fewer is lighter on phones. @defaultValue `524288` */
   points?: number
   /** Change this to replay the gather-in. @defaultValue `0` */
@@ -69,19 +81,20 @@ export type DepthDustProps = {
 export function DepthDust({
   src,
   depthMap,
-  drift = 0.9,
-  splash = 0.15,
-  gather = 0.95,
-  depth = 0.2,
-  line = DEFAULT_LINE,
-  particles = "subtle",
-  driftSpeed = 1,
-  reach = 1,
-  spread = 0.5,
-  softness = 0.5,
+  drift = DEFAULT_SETTINGS.drift,
+  splash = DEFAULT_SETTINGS.splash,
+  gather = DEFAULT_SETTINGS.gather,
+  depth = DEFAULT_SETTINGS.depth,
+  line = DEFAULT_SETTINGS.line,
+  particles = DEFAULT_SETTINGS.particles,
+  driftSpeed = DEFAULT_DRIFT_SPEED,
+  reach = DEFAULT_SETTINGS.reach,
+  spread = DEFAULT_SETTINGS.spread,
+  softness = DEFAULT_SETTINGS.softness,
   theme = "dark",
   pan = true,
-  panSpeed = 1,
+  panSpeed = DEFAULT_PAN_SPEED,
+  angle = DEFAULT_ANGLE,
   points,
   playToken = 0,
   onError,
@@ -109,6 +122,7 @@ export function DepthDust({
       points,
       panEnabled: pan,
       panSpeed,
+      angle,
       playToken,
       onError,
     })

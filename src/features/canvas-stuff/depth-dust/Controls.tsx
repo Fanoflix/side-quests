@@ -1,7 +1,8 @@
 import { useRef } from "react"
-import { ImagePlus, RotateCcw } from "lucide-react"
+import { Eye, ImagePlus, RotateCcw } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
+import { Toggle } from "@/components/ui/toggle"
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 import { Panel } from "@/components/stage/Panel"
 import { Range } from "@/components/stage/Range"
@@ -33,6 +34,8 @@ type Props = {
   onPanSpeedChange: (speed: number) => void
   onDriftSpeedChange: (speed: number) => void
   onLineDragChange: (active: boolean) => void
+  comparing: boolean
+  onComparingChange: (comparing: boolean) => void
 }
 
 const percent = (value: number) => `${Math.round(value * 100)}`
@@ -68,6 +71,8 @@ export function Controls({
   onPanSpeedChange,
   onDriftSpeedChange,
   onLineDragChange,
+  comparing,
+  onComparingChange,
 }: Props) {
   const fileRef = useRef<HTMLInputElement>(null)
   const message = statusLine(status)
@@ -105,6 +110,19 @@ export function Controls({
             }}
           />
         </div>
+        {/* A latch, not a hold: pressing on the picture already means "pan",
+            and a latch lets you keep the original up while you move a
+            slider. */}
+        <Toggle
+          variant="outline"
+          disabled={!hasPicture}
+          pressed={comparing}
+          onPressedChange={onComparingChange}
+          className="w-full"
+        >
+          <Eye />
+          {comparing ? "Showing the flat picture" : "Compare"}
+        </Toggle>
         {message && (
           <p aria-live="polite" className="text-xs text-muted-foreground">
             {message}

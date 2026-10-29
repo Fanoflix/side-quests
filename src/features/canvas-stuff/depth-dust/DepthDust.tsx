@@ -9,6 +9,11 @@ import { useDepthDust } from "./useDepthDust"
 export function DepthDust() {
   const {
     settings,
+    comparing,
+    setComparing,
+    pictureUrl,
+    flatSize,
+    angle,
     status,
     stage,
     stageHeight,
@@ -67,6 +72,8 @@ export function DepthDust() {
             onPanSpeedChange={setPanSpeed}
             onDriftSpeedChange={setDriftSpeed}
             onLineDragChange={showGuide}
+            comparing={comparing}
+            onComparingChange={setComparing}
           />
         }
       >
@@ -91,6 +98,14 @@ export function DepthDust() {
               panEnabled && (dragging ? "cursor-grabbing" : "cursor-grab")
             )}
           />
+          {comparing && (
+            <img
+              src={pictureUrl}
+              alt="The original picture"
+              style={{ width: flatSize.width, height: flatSize.height }}
+              className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+            />
+          )}
         </FileDropZone>
       </ToolStage>
 
@@ -100,6 +115,7 @@ export function DepthDust() {
         light={light}
         pan={panEnabled}
         panSpeed={panSpeed}
+        angle={angle}
       />
     </div>
   )

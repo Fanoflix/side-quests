@@ -3,10 +3,11 @@ import { useReducedMotion } from "motion/react"
 
 import { dither } from "@/features/canvas-stuff/dithering/pipeline"
 import { render } from "@/features/canvas-stuff/anti-aliasing/raster"
+import { createField } from "@/features/canvas-stuff/depth-dust/field"
 import {
-  DEFAULT_LINE,
-  createField,
-} from "@/features/canvas-stuff/depth-dust/field"
+  DEFAULT_ANGLE,
+  DEFAULT_SETTINGS,
+} from "@/features/canvas-stuff/depth-dust/defaults"
 import { loadDefaultPicture } from "@/features/canvas-stuff/depth-dust/useDepthDust"
 import { useInView } from "@/hooks/useInView"
 
@@ -160,19 +161,9 @@ export function useDepthDustPreview() {
             time: reduce ? 0 : now / 1000,
             driftTime: reduce ? 0 : now / 1000,
             intro: 1,
-            settings: {
-              drift: 0.9,
-              splash: 0.2,
-              gather: 0.9,
-              depth: 0.45,
-              line: DEFAULT_LINE,
-              particles: "subtle",
-              spread: 0.5,
-              reach: 1,
-              softness: 0.5,
-            },
+            settings: DEFAULT_SETTINGS,
             light: false,
-            pan: { yaw: 0, pitch: 0 },
+            pan: DEFAULT_ANGLE,
             guide: 0,
           })
           if (!reduce) frame = requestAnimationFrame(draw)

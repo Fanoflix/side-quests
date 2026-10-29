@@ -1,30 +1,29 @@
-import { DEFAULT_LINE } from "./field"
+import {
+  DEFAULT_ANGLE,
+  DEFAULT_DRIFT_SPEED,
+  DEFAULT_PAN_SPEED,
+  DEFAULT_SETTINGS,
+} from "./defaults"
 import type { DriftLine, DustSettings } from "./field"
+import type { Pan } from "./usePan"
 
 export const PACKAGE_NAME = "side-quests-lab"
 export const INSTALL = `npm i ${PACKAGE_NAME} motion`
 
 /** The component's own defaults, so the snippet only lists what you changed. */
 const DEFAULTS = {
-  drift: 0.9,
-  splash: 0.15,
-  gather: 0.95,
-  depth: 0.2,
-  particles: "subtle",
-  driftSpeed: 1,
-  spread: 0.5,
-  reach: 1,
-  softness: 0.5,
-  theme: "dark",
-  pan: true,
-  panSpeed: 1,
-} as const
+  ...DEFAULT_SETTINGS,
+  driftSpeed: DEFAULT_DRIFT_SPEED,
+  panSpeed: DEFAULT_PAN_SPEED,
+}
 
 export type SnippetInput = DustSettings & {
   driftSpeed: number
   light: boolean
   pan: boolean
   panSpeed: number
+  /** Where the view rests, after any drag. */
+  angle: Pan
 }
 
 const round = (v: number) => Math.round(v * 100) / 100
@@ -48,11 +47,11 @@ export function depthDustSnippet(input: SnippetInput): string {
     `depthMap="/its-depth.png"`,
   ]
   for (const key of ["drift", "splash", "gather", "depth"] as const) {
-    if (round(input[key]) !== DEFAULTS[key]) {
+    if (round(input[key]) !== round(DEFAULTS[key])) {
       props.push(`${key}={${round(input[key])}}`)
     }
   }
-  if (!sameLine(input.line, DEFAULT_LINE)) {
+  if (!sameLine(input.line, DEFAULTS.line)) {
     props.push(
       `line={{ a: ${point(input.line.a)}, b: ${point(input.line.b)} }}`
     )
@@ -61,7 +60,7 @@ export function depthDustSnippet(input: SnippetInput): string {
     props.push(`particles="${input.particles}"`)
   }
   for (const key of ["driftSpeed", "reach", "spread", "softness"] as const) {
-    if (round(input[key]) !== DEFAULTS[key]) {
+    if (round(input[key]) !== round(DEFAULTS[key])) {
       props.push(`${key}={${round(input[key])}}`)
     }
   }
@@ -69,6 +68,14 @@ export function depthDustSnippet(input: SnippetInput): string {
   if (!input.pan) props.push(`pan={false}`)
   else if (round(input.panSpeed) !== DEFAULTS.panSpeed) {
     props.push(`panSpeed={${round(input.panSpeed)}}`)
+  }
+  if (
+    round(input.angle.yaw) !== DEFAULT_ANGLE.yaw ||
+    round(input.angle.pitch) !== DEFAULT_ANGLE.pitch
+  ) {
+    props.push(
+      `angle={{ yaw: ${round(input.angle.yaw)}, pitch: ${round(input.angle.pitch)} }}`
+    )
   }
 
   return [

@@ -5,26 +5,14 @@ import { useToolStage } from "@/components/stage/useToolStage"
 import { estimateDepth } from "./depth"
 import { loadDepth, loadImage } from "./picture"
 import { usePan } from "./usePan"
-import { DEFAULT_LINE, createField } from "./field"
+import { createField, pictureSize } from "./field"
+import {
+  DEFAULT_ANGLE,
+  DEFAULT_DRIFT_SPEED,
+  DEFAULT_PAN_SPEED,
+  DEFAULT_SETTINGS,
+} from "./defaults"
 import type { DustSettings, Field, Picture } from "./field"
-
-/**
- * Drift high, splash low, gather nearly tight, depth gentle: a picture you can
- * still read at a glance, that's visibly alive, and whose background frays
- * into dust. Turning depth up is the most dramatic slider, so it starts low
- * enough that there's somewhere to go.
- */
-const DEFAULT_SETTINGS: DustSettings = {
-  drift: 0.9,
-  splash: 0.15,
-  gather: 0.95,
-  depth: 0.2,
-  line: DEFAULT_LINE,
-  particles: "subtle",
-  spread: 0.5,
-  reach: 1,
-  softness: 0.5,
-}
 
 const BASE = import.meta.env.BASE_URL.replace(/\/+$/, "")
 
@@ -100,8 +88,10 @@ export function useDepthDust() {
   const [picture, setPicture] = useState<Picture | null>(null)
   const [status, setStatus] = useState<DustStatus>({ kind: "idle" })
   const [panEnabled, setPanEnabled] = useState(true)
-  const [panSpeed, setPanSpeed] = useState(1)
-  const [driftSpeed, setDriftSpeed] = useState(1)
+  const [panSpeed, setPanSpeed] = useState(DEFAULT_PAN_SPEED)
+  const [driftSpeed, setDriftSpeed] = useState(DEFAULT_DRIFT_SPEED)
+  const [comparing, setComparing] = useState(false)
+  const [pictureUrl, setPictureUrl] = useState(DEFAULT_PICTURE)
   const stage = useToolStage()
   const light = useSyncExternalStore(subscribeTheme, isLight, () => false)
   const reduce = useReducedMotion() ?? false
@@ -116,7 +106,12 @@ export function useDepthDust() {
   // Restarts the frame loop when it has stopped — only ever the case with
   // reduced motion, where the loop draws one frame and then waits for a drag.
   const wake = useRef(() => {})
-  const pan = usePan({ enabled: panEnabled, speed: panSpeed, wake })
+  const pan = usePan({
+    enabled: panEnabled,
+    speed: panSpeed,
+    wake,
+    initial: DEFAULT_ANGLE,
+  })
   // Seconds on the drift clock; see `Frame.driftTime`.
   const driftClock = useRef(0)
   // When the guide line starts fading: Infinity while the line is being
@@ -212,7 +207,9 @@ export function useDepthDust() {
     const id = pickId.current
     loadDefaultPicture()
       .then((next) => {
-        if (pickId.current === id) setPicture(next)
+        if (pickId.current !== id) return
+        setPicture(next)
+        setPictureUrl(DEFAULT_PICTURE)
       })
       .catch(() => setStatus({ kind: "error" }))
   }, [])
@@ -240,6 +237,7 @@ export function useDepthDust() {
         depth,
         aspect: image.naturalWidth / image.naturalHeight,
       })
+      setPictureUrl(url)
       setStatus({ kind: "idle" })
     } catch {
       if (pickId.current === id) setStatus({ kind: "error" })
@@ -271,14 +269,24 @@ export function useDepthDust() {
       )
     : MIN_STAGE_H
 
+  const aspect = picture?.aspect ?? 16 / 9
+  // The flat picture for Compare: the same size and place as the dust, so
+  // flicking between them shows exactly what the depth adds.
+  const flatSize = pictureSize(aspect, stage.width || 1, stageHeight)
+
   return {
     settings,
+    comparing,
+    setComparing,
+    pictureUrl,
+    flatSize,
+    angle: pan.angle,
     status,
     stage,
     stageHeight,
     canvasRef,
     hasPicture: !!picture,
-    aspect: picture?.aspect ?? 16 / 9,
+    aspect,
     busy: status.kind === "downloading" || status.kind === "reading",
     light,
     panEnabled,

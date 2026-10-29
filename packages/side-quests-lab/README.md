@@ -52,19 +52,20 @@ It fills its container's width and is 16:10 unless you give it a height.
 | ------------ | ------------ | ------------------------------------------------------------------- |
 | `src`        | required     | The picture. Same-origin or CORS-enabled.                           |
 | `depthMap`   | required     | A depth-map URL, a `DepthMap`, or a function that returns one.      |
-| `drift`      | `0.9`        | How much the dust moves and blows off, 0 to 2.                      |
+| `drift`      | `0.72`       | How much the dust moves and blows off, 0 to 2.                      |
 | `splash`     | `0.15`       | Share of points thrown loose to orbit the picture.                  |
 | `gather`     | `0.95`       | How tightly points hold their place.                                |
-| `depth`      | `0.2`        | How far near things push towards you.                               |
+| `depth`      | `0.84`       | How far near things push towards you.                               |
 | `line`       | diagonal     | Past this line the picture gives off a plume. See below.            |
-| `particles`  | `"subtle"`   | `"subtle"`, `"dots"`, `"streaks"` or `"comets"`.                    |
-| `driftSpeed` | `1`          | How fast the plume travels.                                         |
-| `reach`      | `1`          | How far the plume travels, 0.25 to 8.                               |
-| `spread`     | `0.5`        | How much each particle's direction varies. 0 is dead straight.      |
+| `particles`  | `"comets"`   | `"subtle"`, `"dots"`, `"streaks"` or `"comets"`.                    |
+| `driftSpeed` | `3.45`       | How fast the plume travels.                                         |
+| `reach`      | `0.25`       | How far the plume travels, 0.25 to 8.                               |
+| `spread`     | `0.25`       | How much each particle's direction varies. 0 is dead straight.      |
 | `softness`   | `0.5`        | How wide the band where the drift starts is. 0 is a sharp line.     |
 | `theme`      | `"dark"`     | `"dark"` glows on black, `"light"` is true colour on a light page.  |
 | `pan`        | `true`       | Drag to turn the picture.                                           |
 | `panSpeed`   | `1`          | How far a drag turns it.                                            |
+| `angle`      | turned right | The resting view in radians, `{ yaw, pitch }`. The sway moves around it. |
 | `points`     | `524288`     | Point budget. Fewer is lighter on phones.                           |
 | `playToken`  | `0`          | Change it to replay the gather-in.                                  |
 | `onError`    |              | Called if the picture or depth map fails, or WebGL2 is missing.     |

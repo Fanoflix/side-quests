@@ -38,13 +38,13 @@ export type Vec2 = { x: number; y: number }
 export type DriftLine = { a: Vec2; b: Vec2 }
 
 /**
- * A diagonal from the top left towards the bottom right, blowing up and to the
- * right: the lower left of the picture stays whole and the upper right gives
- * off dust, like smoke rising off it.
+ * A shallow diagonal from the left edge down towards the bottom right,
+ * blowing up and to the right: the lower left of the picture stays whole and
+ * the upper right gives off dust, like smoke lifting off it.
  */
 export const DEFAULT_LINE: DriftLine = {
-  a: { x: 0.05, y: 0 },
-  b: { x: 0.8, y: 0.85 },
+  a: { x: -0.06, y: 0.22 },
+  b: { x: 0.93, y: 0.68 },
 }
 
 /** How the points blowing off past the drift line are drawn. */
@@ -154,6 +154,17 @@ export function cameraDistance(aspect: number, viewAspect: number) {
  * clamped at 1 so a huge canvas gets sparse and grainy rather than over-bright,
  * which is the look we want anyway.
  */
+/**
+ * The picture's on-screen size in CSS pixels, face-on, for a canvas of this
+ * size — where the flat original sits when you compare. Mirrors the camera:
+ * a 1-unit-tall picture at `cameraDistance` spans `FOCAL / dist` of the
+ * canvas's half-height.
+ */
+export function pictureSize(aspect: number, viewW: number, viewH: number) {
+  const height = (FOCAL / cameraDistance(aspect, viewW / viewH)) * (viewH / 2)
+  return { width: height * aspect, height }
+}
+
 export function pointGain(
   points: number,
   pointPx: number,

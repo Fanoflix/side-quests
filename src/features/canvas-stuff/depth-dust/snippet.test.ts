@@ -1,23 +1,21 @@
 import { describe, expect, it } from "vitest"
 
-import { DEFAULT_LINE } from "./field"
+import {
+  DEFAULT_ANGLE,
+  DEFAULT_DRIFT_SPEED,
+  DEFAULT_PAN_SPEED,
+  DEFAULT_SETTINGS,
+} from "./defaults"
 import { depthDustSnippet } from "./snippet"
 import type { SnippetInput } from "./snippet"
 
 const defaults: SnippetInput = {
-  drift: 0.9,
-  splash: 0.15,
-  gather: 0.95,
-  depth: 0.2,
-  line: DEFAULT_LINE,
-  particles: "subtle",
-  spread: 0.5,
-  reach: 1,
-  softness: 0.5,
-  driftSpeed: 1,
+  ...DEFAULT_SETTINGS,
+  driftSpeed: DEFAULT_DRIFT_SPEED,
   light: false,
   pan: true,
-  panSpeed: 1,
+  panSpeed: DEFAULT_PAN_SPEED,
+  angle: DEFAULT_ANGLE,
 }
 
 describe("depthDustSnippet", () => {
@@ -45,6 +43,7 @@ describe("depthDustSnippet", () => {
     })
     expect(snippet).toContain("reach={4}")
     expect(snippet).not.toContain("spread")
+    expect(snippet).not.toContain("angle")
     expect(snippet).toContain("drift={1}")
     expect(snippet).toContain(`particles="streaks"`)
     expect(snippet).toContain("driftSpeed={2.5}")
@@ -67,5 +66,13 @@ describe("depthDustSnippet", () => {
     const snippet = depthDustSnippet({ ...defaults, pan: false, panSpeed: 2 })
     expect(snippet).toContain("pan={false}")
     expect(snippet).not.toContain("panSpeed")
+  })
+
+  it("writes the view angle once you've dragged away from the default", () => {
+    const snippet = depthDustSnippet({
+      ...defaults,
+      angle: { yaw: -0.3, pitch: 0.123 },
+    })
+    expect(snippet).toContain("angle={{ yaw: -0.3, pitch: 0.12 }}")
   })
 })
