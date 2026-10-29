@@ -29,7 +29,7 @@ export type DepthDustProps = {
   /** Share of points thrown loose to orbit the picture, 0–1. @defaultValue `0.15` */
   splash?: number
   /** How tightly points hold their place, 0–1. @defaultValue `0.95` */
-  gather?: number
+  cohesion?: number
   /** How far near things push towards you, 0–1. @defaultValue `0.84` */
   depth?: number
   /**
@@ -83,7 +83,7 @@ export function DepthDust({
   depthMap,
   drift = DEFAULT_SETTINGS.drift,
   splash = DEFAULT_SETTINGS.splash,
-  gather = DEFAULT_SETTINGS.gather,
+  cohesion = DEFAULT_SETTINGS.cohesion,
   depth = DEFAULT_SETTINGS.depth,
   line = DEFAULT_SETTINGS.line,
   particles = DEFAULT_SETTINGS.particles,
@@ -109,7 +109,7 @@ export function DepthDust({
       settings: {
         drift,
         splash,
-        gather,
+        cohesion,
         depth,
         line,
         particles,

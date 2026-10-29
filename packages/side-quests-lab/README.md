@@ -25,7 +25,12 @@ export function Hero() {
 ```
 
 `depthMap` is a greyscale image of how far away each pixel is: white is near,
-black is far. To make one for a picture you already have:
+black is far. The easiest way to get one: open
+[Depth Dust](https://fanoflix.github.io/side-quests/depth-dust), drop your
+picture in, and press **Download depth map**. It's worked out in your browser
+and the snippet on that page uses the same file names.
+
+To make one from the command line instead:
 
 ```bash
 npm i -D @huggingface/transformers
@@ -54,7 +59,7 @@ It fills its container's width and is 16:10 unless you give it a height.
 | `depthMap`   | required     | A depth-map URL, a `DepthMap`, or a function that returns one.      |
 | `drift`      | `0.72`       | How much the dust moves and blows off, 0 to 2.                      |
 | `splash`     | `0.15`       | Share of points thrown loose to orbit the picture.                  |
-| `gather`     | `0.95`       | How tightly points hold their place.                                |
+| `cohesion`   | `0.95`       | How tightly points hold their place.                                |
 | `depth`      | `0.84`       | How far near things push towards you.                               |
 | `line`       | diagonal     | Past this line the picture gives off a plume. See below.            |
 | `particles`  | `"comets"`   | `"subtle"`, `"dots"`, `"streaks"` or `"comets"`.                    |

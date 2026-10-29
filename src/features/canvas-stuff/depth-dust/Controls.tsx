@@ -94,7 +94,7 @@ export function Controls({
             size="icon"
             disabled={!hasPicture}
             onClick={onReplay}
-            aria-label="Gather again"
+            aria-label="Play the gather-in again"
           >
             <RotateCcw />
           </Button>
@@ -150,13 +150,13 @@ export function Controls({
           onChange={(splash) => onChange({ splash })}
         />
         <Range
-          label="Gather"
-          value={settings.gather}
+          label="Cohesion"
+          value={settings.cohesion}
           min={0}
           max={1}
           step={0.01}
           format={percent}
-          onChange={(gather) => onChange({ gather })}
+          onChange={(cohesion) => onChange({ cohesion })}
         />
         <Range
           label="Depth"

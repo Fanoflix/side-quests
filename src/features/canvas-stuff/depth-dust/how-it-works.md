@@ -27,7 +27,7 @@ Inspired by [Gather](https://gather.be-of-dao.com) by DAO.
 - `aspect` = "the picture's width divided by its height. The picture is always 1 unit tall."
 - `t` = "time in seconds."
 - `T` = "the drift clock: seconds × the Drift speed slider, added up frame by frame."
-- `drift` = "the Drift slider, 0 to 2." `splash`, `gather`, `depth` = "the other sliders, 0 to 1."
+- `drift` = "the Drift slider, 0 to 2." `splash`, `cohesion`, `depth` = "the other sliders, 0 to 1."
 - `n` = "the drift line's normal: the way the tick points, the way the plume blows."
 - `s` = "how far a point sits past the drift line, along `n`, give or take its own random share of the Softness band."
 - `reach`, `spread`, `softness` = "the Reach (0.25–8×), Spread and Softness (0–1) sliders."
@@ -138,13 +138,13 @@ The particle styles change how the plume is drawn:
 - **Comets**: shorter tails on half the points, each with a bigger, brighter
   head.
 
-### Step 5: gather and splash
+### Step 5: cohesion and splash
 
-**Gather** is how tightly points stay in place. Below 1, each point gets a fixed
+**Cohesion** is how tightly points stay in place. Below 1, each point gets a fixed
 random push, mostly in the background:
 
 ```
-loose = (1 − gather)²
+loose = (1 − cohesion)²
 pos  += ((r₂, r₃, r₄) − 0.5) · loose · (0.1 + 0.8 · far)
 ```
 

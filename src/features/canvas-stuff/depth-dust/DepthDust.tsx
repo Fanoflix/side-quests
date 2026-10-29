@@ -12,6 +12,8 @@ export function DepthDust() {
     comparing,
     setComparing,
     pictureUrl,
+    pictureName,
+    downloadDepth,
     flatSize,
     angle,
     status,
@@ -116,6 +118,9 @@ export function DepthDust() {
         pan={panEnabled}
         panSpeed={panSpeed}
         angle={angle}
+        pictureName={pictureName}
+        hasPicture={hasPicture}
+        onDownloadDepth={downloadDepth}
       />
     </div>
   )

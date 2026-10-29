@@ -17,7 +17,19 @@ const DEFAULTS = {
   panSpeed: DEFAULT_PAN_SPEED,
 }
 
+/**
+ * The depth map's file name for a picture: its name without the extension,
+ * plus `-depth.png`. The download and the snippet both use it, so the file
+ * you save is the file the snippet asks for.
+ */
+export function depthFileName(pictureName: string) {
+  const stem = pictureName.replace(/\.[^./]+$/, "") || "picture"
+  return `${stem}-depth.png`
+}
+
 export type SnippetInput = DustSettings & {
+  /** The picture's file name, e.g. `helm.jpg`. */
+  pictureName: string
   driftSpeed: number
   light: boolean
   pan: boolean
@@ -43,10 +55,10 @@ const point = ({ x, y }: { x: number; y: number }) =>
  */
 export function depthDustSnippet(input: SnippetInput): string {
   const props: string[] = [
-    `src="/your-picture.jpg"`,
-    `depthMap="/its-depth.png"`,
+    `src="/${input.pictureName}"`,
+    `depthMap="/${depthFileName(input.pictureName)}"`,
   ]
-  for (const key of ["drift", "splash", "gather", "depth"] as const) {
+  for (const key of ["drift", "splash", "cohesion", "depth"] as const) {
     if (round(input[key]) !== round(DEFAULTS[key])) {
       props.push(`${key}={${round(input[key])}}`)
     }

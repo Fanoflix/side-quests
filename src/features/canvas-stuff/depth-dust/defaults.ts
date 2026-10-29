@@ -12,7 +12,7 @@ import type { Pan } from "./usePan"
 export const DEFAULT_SETTINGS: DustSettings = {
   drift: 0.72,
   splash: 0.15,
-  gather: 0.95,
+  cohesion: 0.95,
   depth: 0.84,
   line: DEFAULT_LINE,
   particles: "comets",

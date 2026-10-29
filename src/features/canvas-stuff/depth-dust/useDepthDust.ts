@@ -3,7 +3,8 @@ import { useReducedMotion } from "motion/react"
 
 import { useToolStage } from "@/components/stage/useToolStage"
 import { estimateDepth } from "./depth"
-import { loadDepth, loadImage } from "./picture"
+import { depthToPng, loadDepth, loadImage } from "./picture"
+import { depthFileName } from "./snippet"
 import { usePan } from "./usePan"
 import { createField, pictureSize } from "./field"
 import {
@@ -92,6 +93,9 @@ export function useDepthDust() {
   const [driftSpeed, setDriftSpeed] = useState(DEFAULT_DRIFT_SPEED)
   const [comparing, setComparing] = useState(false)
   const [pictureUrl, setPictureUrl] = useState(DEFAULT_PICTURE)
+  const [pictureName, setPictureName] = useState(
+    DEFAULT_PICTURE.split("/").pop() ?? "picture.jpg"
+  )
   const stage = useToolStage()
   const light = useSyncExternalStore(subscribeTheme, isLight, () => false)
   const reduce = useReducedMotion() ?? false
@@ -238,6 +242,7 @@ export function useDepthDust() {
         aspect: image.naturalWidth / image.naturalHeight,
       })
       setPictureUrl(url)
+      setPictureName(file.name)
       setStatus({ kind: "idle" })
     } catch {
       if (pickId.current === id) setStatus({ kind: "error" })
@@ -247,6 +252,19 @@ export function useDepthDust() {
   const showGuide = (active: boolean) => {
     guideUntil.current = active ? Infinity : performance.now() + GUIDE_HOLD_MS
     wake.current()
+  }
+
+  // Hand over the depth map of whatever is on screen as the PNG the component
+  // reads — so trying your own picture here is also how you get its map.
+  const downloadDepth = async () => {
+    if (!picture) return
+    const blob = await depthToPng(picture.depth)
+    const href = URL.createObjectURL(blob)
+    const link = document.createElement("a")
+    link.href = href
+    link.download = depthFileName(pictureName)
+    link.click()
+    setTimeout(() => URL.revokeObjectURL(href), 0)
   }
 
   const replay = () => {
@@ -279,6 +297,8 @@ export function useDepthDust() {
     comparing,
     setComparing,
     pictureUrl,
+    pictureName,
+    downloadDepth,
     flatSize,
     angle: pan.angle,
     status,

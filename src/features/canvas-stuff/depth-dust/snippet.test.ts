@@ -6,10 +6,11 @@ import {
   DEFAULT_PAN_SPEED,
   DEFAULT_SETTINGS,
 } from "./defaults"
-import { depthDustSnippet } from "./snippet"
+import { depthDustSnippet, depthFileName } from "./snippet"
 import type { SnippetInput } from "./snippet"
 
 const defaults: SnippetInput = {
+  pictureName: "your-picture.jpg",
   ...DEFAULT_SETTINGS,
   driftSpeed: DEFAULT_DRIFT_SPEED,
   light: false,
@@ -26,7 +27,7 @@ describe("depthDustSnippet", () => {
         "",
         "<DepthDust",
         `  src="/your-picture.jpg"`,
-        `  depthMap="/its-depth.png"`,
+        `  depthMap="/your-picture-depth.png"`,
         "/>",
       ].join("\n")
     )
@@ -74,5 +75,16 @@ describe("depthDustSnippet", () => {
       angle: { yaw: -0.3, pitch: 0.123 },
     })
     expect(snippet).toContain("angle={{ yaw: -0.3, pitch: 0.12 }}")
+  })
+})
+
+describe("depthFileName", () => {
+  it.each([
+    ["helm.jpg", "helm-depth.png"],
+    ["my.photo.webp", "my.photo-depth.png"],
+    ["no-extension", "no-extension-depth.png"],
+    [".jpg", "picture-depth.png"],
+  ])("names the depth map for %s as %s", (picture, depth) => {
+    expect(depthFileName(picture)).toBe(depth)
   })
 })

@@ -55,7 +55,7 @@ export type Particles = (typeof PARTICLES)[number]
 export type DustSettings = {
   drift: number
   splash: number
-  gather: number
+  cohesion: number
   depth: number
   line: DriftLine
   particles: Particles
@@ -186,7 +186,7 @@ uniform float uTime;
 uniform float uIntro;
 uniform float uDrift;
 uniform float uSplash;
-uniform float uGather;
+uniform float uCohesion;
 uniform float uExtrude;
 uniform float uAspect;
 uniform vec2 uSway;
@@ -370,11 +370,11 @@ void main() {
   float bend = ph * ph * curl + sin(ph * 6.0 + r0 * 6.283) * 0.02 * ph;
   pos += (heading * ph + across * bend) * reach * plume;
 
-  // Gather: how tightly points hold their place. Below 1, each point is pushed
+  // Cohesion: how tightly points hold their place. Below 1, each point is pushed
   // off its spot by a fixed random amount — more so in the background — so the
   // picture loosens into a cloud around a still-readable subject. Squared, so
   // the top of the slider is fine control and the bottom falls apart quickly.
-  float loose = (1.0 - uGather) * (1.0 - uGather);
+  float loose = (1.0 - uCohesion) * (1.0 - uCohesion);
   pos += (vec3(r2, r3, r4) - 0.5) * loose * (0.1 + 0.8 * far);
 
   // Splash: a few percent of points break away entirely and orbit the picture
@@ -583,7 +583,7 @@ export function createField(
     intro: at("uIntro"),
     drift: at("uDrift"),
     splash: at("uSplash"),
-    gather: at("uGather"),
+    cohesion: at("uCohesion"),
     extrude: at("uExtrude"),
     aspect: at("uAspect"),
     sway: at("uSway"),
@@ -682,7 +682,7 @@ export function createField(
     gl.uniform1f(u.intro, intro)
     gl.uniform1f(u.drift, settings.drift)
     gl.uniform1f(u.splash, settings.splash)
-    gl.uniform1f(u.gather, settings.gather)
+    gl.uniform1f(u.cohesion, settings.cohesion)
     gl.uniform1f(u.extrude, settings.depth * MAX_EXTRUDE)
     gl.uniform1f(u.aspect, aspect)
     gl.uniform2f(
