@@ -65,7 +65,7 @@ It fills its container's width and is 16:10 unless you give it a height.
 | `theme`      | `"dark"`     | `"dark"` glows on black, `"light"` is true colour on a light page.  |
 | `pan`        | `true`       | Drag to turn the picture.                                           |
 | `panSpeed`   | `1`          | How far a drag turns it.                                            |
-| `angle`      | turned right | The resting view in radians, `{ yaw, pitch }`. The sway moves around it. |
+| `angle`      | face-on      | The resting view in radians, `{ yaw, pitch }`. The sway moves around it. |
 | `points`     | `524288`     | Point budget. Fewer is lighter on phones.                           |
 | `playToken`  | `0`          | Change it to replay the gather-in.                                  |
 | `onError`    |              | Called if the picture or depth map fails, or WebGL2 is missing.     |

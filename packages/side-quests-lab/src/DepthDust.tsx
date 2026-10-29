@@ -57,7 +57,7 @@ export type DepthDustProps = {
   /**
    * The view the camera rests at, in radians: yaw turns it side to side,
    * pitch up and down. The slow sway moves around it, and turning `pan` off
-   * returns to it. @defaultValue `{ yaw: 0.45, pitch: 0.08 }`
+   * returns to it. @defaultValue `{ yaw: 0, pitch: 0 }`
    */
   angle?: Pan
   /** Point budget. Fewer is lighter on phones. @defaultValue `524288` */
