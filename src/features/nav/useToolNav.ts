@@ -12,7 +12,15 @@ function isTyping(target: EventTarget | null) {
 }
 
 export function useToolNav() {
-  const pathname = useRouterState({ select: (s) => s.location.pathname })
+  // The page that's on screen, not the one being navigated to. The URL changes
+  // the moment a link is clicked, but the next route's code is still loading,
+  // so a layout keyed on the URL switched shells around the *old* page: the
+  // quest you were leaving flashed full width in the landing page's layout,
+  // and the other way round. `resolvedLocation` moves only once the new
+  // route renders, so the shell and the content change together.
+  const pathname = useRouterState({
+    select: (s) => (s.resolvedLocation ?? s.location).pathname,
+  })
   const current = findTool(pathname)
   const index = current ? tools.indexOf(current) : -1
   const prev = index > 0 ? tools[index - 1] : tools.at(-1)
