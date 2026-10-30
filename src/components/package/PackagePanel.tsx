@@ -1,20 +1,24 @@
 import type { ReactNode } from "react"
 
+import { CodeBlock } from "./CodeBlock"
 import { InstallCommand } from "./InstallCommand"
 import { NpmLink } from "./NpmLink"
 
 /**
- * "This one's in the package": a heading, the npm link and the install line,
- * under a tool that ships in side-quests-lab. `children` is for whatever that
- * tool needs said on top, like fonts.
+ * "This one's in the package": a heading, the npm link, the install line and
+ * a usage snippet, under a tool that ships in side-quests-lab. The same
+ * pieces, in the same order, as Depth Dust's longer card, so the three pages
+ * read as one thing. `children` is a short note under the snippet.
  */
 export function PackagePanel({
   title,
   command,
+  usage,
   children,
 }: {
   title: ReactNode
   command: string
+  usage: string
   children?: ReactNode
 }) {
   return (
@@ -24,10 +28,11 @@ export function PackagePanel({
         <NpmLink />
       </div>
       <InstallCommand command={command} />
+      <CodeBlock code={usage} />
       {children && (
-        <div className="text-xs leading-relaxed text-muted-foreground">
+        <p className="text-xs leading-relaxed text-muted-foreground">
           {children}
-        </div>
+        </p>
       )}
     </section>
   )

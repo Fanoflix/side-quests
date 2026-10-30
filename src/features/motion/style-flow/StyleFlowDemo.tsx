@@ -39,6 +39,13 @@ import {
  * track within the cooldown. Click the preview to shuffle. View-only — all state
  * lives in `useStyleFlowDemo`.
  */
+const STYLE_FLOW_USAGE = `import "@fontsource-variable/recursive/full.css"
+import "@fontsource-variable/fraunces/full.css"
+import "@fontsource-variable/fraunces/full-italic.css"
+import { StyleFlow } from "side-quests-lab"
+
+<StyleFlow value="Shimmer" />`
+
 export function StyleFlowDemo() {
   const {
     stage,
@@ -307,15 +314,12 @@ export function StyleFlowDemo() {
 
         <PackagePanel
           title="Use Style Flow in your app"
-          command="npm i side-quests-lab motion"
+          command="npm i side-quests-lab motion @fontsource-variable/recursive @fontsource-variable/fraunces"
+          usage={STYLE_FLOW_USAGE}
         >
-          Then{" "}
-          <code className="font-mono text-foreground">{`import { StyleFlow } from "side-quests-lab"`}</code>
-          . It moves between two variable fonts, Recursive and Fraunces:{" "}
-          <code className="font-mono text-foreground">
-            npm i @fontsource-variable/recursive @fontsource-variable/fraunces
-          </code>
-          , and the npm page shows the imports.
+          It moves between two variable fonts, Recursive and Fraunces. The full
+          builds matter: the default Recursive build has no slant axis, so
+          slants would do nothing.
         </PackagePanel>
       </div>
     </TooltipProvider>

@@ -13,7 +13,7 @@ export function InstallCommand({ command }: { command: string }) {
 
   return (
     <div className="flex items-center justify-between gap-3 border border-border bg-muted/30 py-2 pr-2 pl-4">
-      <code className="min-w-0 truncate font-mono text-sm">
+      <code className="min-w-0 font-mono text-sm [overflow-wrap:anywhere]">
         <span className="text-muted-foreground select-none">$ </span>
         {command}
       </code>
