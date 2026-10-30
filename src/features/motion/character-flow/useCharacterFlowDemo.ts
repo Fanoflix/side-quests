@@ -56,7 +56,7 @@ const BASE_SIZE_REM = { words: 4.5, sentences: 1.75 } as const
 const GLYPH_WIDTH_EM = 0.58
 
 export const PACKAGE_TAGLINES = [
-  "Coming soon to npm",
+  "Now on npm",
   "One component for React",
   "NumberFlow's own curve",
   "Any word, not just numbers",

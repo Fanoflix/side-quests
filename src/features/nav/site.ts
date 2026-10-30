@@ -1,5 +1,6 @@
 export const SITE_NAME = "Side Quests"
 export const AUTHOR = "Ammar Nasir"
 export const REPO_URL = "https://github.com/Fanoflix/side-quests"
+export const NPM_URL = "https://www.npmjs.com/package/side-quests-lab"
 export const AUTHOR_URL = "https://ammarnasir.com"
 export const LINKEDIN_URL = "https://www.linkedin.com/in/ammar-nasir"

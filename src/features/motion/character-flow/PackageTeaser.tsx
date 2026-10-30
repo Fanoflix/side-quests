@@ -1,7 +1,7 @@
-import { Star } from "lucide-react"
+import { Package } from "lucide-react"
 
 import { buttonVariants } from "@/components/ui/button"
-import { REPO_URL } from "@/features/nav/site"
+import { NPM_URL } from "@/features/nav/site"
 import { CharacterFlow } from "./CharacterFlow"
 import { usePackageTeaser } from "./usePackageTeaser"
 
@@ -18,14 +18,11 @@ export function PackageTeaser() {
           <code className="font-mono text-sm text-muted-foreground">
             <span className="opacity-50">$ </span>npm i side-quests-lab
           </code>
-          <span className="border border-border px-1.5 py-px text-[11px] text-muted-foreground">
-            Soon
-          </span>
         </div>
         <CharacterFlow value={tagline} className="text-base font-medium" />
       </div>
       <a
-        href={REPO_URL}
+        href={NPM_URL}
         target="_blank"
         rel="noreferrer"
         className={buttonVariants({
@@ -33,8 +30,8 @@ export function PackageTeaser() {
           className: "self-start sm:self-auto",
         })}
       >
-        <Star />
-        Star to get notified
+        <Package />
+        View on npm
       </a>
     </div>
   )

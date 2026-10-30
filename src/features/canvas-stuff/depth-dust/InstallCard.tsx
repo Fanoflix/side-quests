@@ -1,7 +1,8 @@
 import type { ReactNode } from "react"
-import { Check, Copy, Download } from "lucide-react"
+import { ArrowUpRight, Check, Copy, Download } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
+import { NPM_URL } from "@/features/nav/site"
 import { depthFileName } from "./snippet"
 import { useInstallCard } from "./useInstallCard"
 import type { SnippetInput } from "./snippet"
@@ -48,9 +49,15 @@ export function InstallCard({ hasPicture, onDownloadDepth, ...input }: Props) {
       <div className="flex flex-col gap-1">
         <div className="flex items-center gap-2.5">
           <h2 className="text-base font-medium">Put it on your own site</h2>
-          <span className="border border-border px-1.5 py-px text-[11px] text-muted-foreground">
-            Coming soon to npm
-          </span>
+          <a
+            href={NPM_URL}
+            target="_blank"
+            rel="noreferrer"
+            className="flex items-center gap-0.5 border border-border px-1.5 py-px text-[11px] text-muted-foreground transition-colors hover:text-foreground"
+          >
+            On npm
+            <ArrowUpRight className="size-3" />
+          </a>
         </div>
         <p className="text-sm text-muted-foreground">
           It's a React component. Tune it here, then follow these three steps.
