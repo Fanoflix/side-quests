@@ -73,9 +73,9 @@ export type Timing = {
 }
 
 export const DEFAULT_TIMING: Timing = {
-  duration: 0.5,
+  duration: 0.6,
   easeKey: "numberFlow",
-  slideDuration: 0.5,
+  slideDuration: 0.6,
   fadeDuration: 0.5,
   stagger: 0,
   maxSteps: 6,

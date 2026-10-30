@@ -61,7 +61,7 @@ export function AppMode({
         {/* The inbox is the raised surface and the detail pane is the canvas
             under it — `card` is a step lighter than `background` in both of the
             app's themes, so the centre reads as recessed. */}
-        {/* Below `lg` the list and the detail take turns: a 19rem column on a
+        {/* Below `lg` the list and the detail take turns: a 14.25rem column on a
             390px screen leaves the detail about 80px, which is no pane at all.
             Side by side from `lg` up, where there's room for both.
 
@@ -70,7 +70,7 @@ export function AppMode({
         <div
           data-pane="inbox"
           className={cn(
-            "min-h-0 w-full shrink-0 flex-col border-border bg-card/35 lg:flex lg:w-[19rem] lg:border-r",
+            "min-h-0 w-full shrink-0 flex-col border-border bg-card/35 lg:flex lg:w-[14.25rem] lg:border-r",
             selectedId === null ? "flex" : "hidden"
           )}
         >

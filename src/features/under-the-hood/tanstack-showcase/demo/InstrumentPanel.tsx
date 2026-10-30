@@ -49,7 +49,7 @@ export function InstrumentPanel({
     <aside
       className={cn(
         PANEL,
-        "showcase-devtools h-[22rem] w-full border-t border-border lg:h-auto lg:w-[26rem] lg:shrink-0 lg:border-t-0 lg:border-l"
+        "showcase-devtools h-[22rem] w-full border-t border-border lg:h-auto lg:w-[19.5rem] lg:shrink-0 lg:border-t-0 lg:border-l"
       )}
     >
       <header className={cn(PANEL_HEADER, "gap-2 pl-1")}>

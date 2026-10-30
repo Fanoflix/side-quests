@@ -24,7 +24,7 @@ export type CharacterFlowOptions = {
 export function useCharacterFlow(
   value: string,
   {
-    duration = 0.5,
+    duration = 0.6,
     ease = numberFlowEase,
     slideDuration = duration,
     slideEase = ease,
