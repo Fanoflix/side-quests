@@ -231,9 +231,9 @@ export const tools: Tool[] = [
     title: "Depth Dust",
     icon: Orbit,
     category: CATEGORIES.canvas,
-    hook: "Half a million specks of light, each one knowing how far away it is.",
+    hook: "Turn any image into a stylized 3D image.",
     description:
-      "Half a million specks of light, each one knowing how far away it is. Drop in any picture and watch it drift apart in 3D.",
+      "Turn any image into a stylized 3D image: half a million specks of light, each pushed towards you by how close it is.",
     added: "Oct 2026",
     keywords: [
       "point cloud",

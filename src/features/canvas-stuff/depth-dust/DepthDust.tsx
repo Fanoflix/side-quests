@@ -52,7 +52,7 @@ export function DepthDust() {
           </>
         }
       >
-        Half a million specks of light, each one knowing how far away it is.
+        Turn any image into a stylized 3D image.
       </ToolIntro>
 
       <ToolStage
