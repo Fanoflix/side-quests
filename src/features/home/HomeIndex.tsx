@@ -97,7 +97,7 @@ export function HomeIndex() {
                   <span aria-hidden>·</span>
                   <span>{tool.category}</span>
                   {tool.downloadable && (
-                    <span className="flex items-center gap-1 border border-border px-1.5 py-px">
+                    <span className="breathe flex items-center gap-1 border border-downloadable/50 bg-downloadable/10 px-1.5 py-px font-medium text-downloadable">
                       <Download className="size-3" />
                       Downloadable
                     </span>

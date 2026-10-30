@@ -1,4 +1,5 @@
 import { IntroLink, ToolIntro } from "@/components/layout/ToolIntro"
+import { NpmLink } from "@/components/package/NpmLink"
 import { ToolStage } from "@/components/stage/ToolStage"
 import { FileDropZone } from "@/components/upload/FileDropZone"
 import { cn } from "@/lib/utils"
@@ -44,6 +45,7 @@ export function DepthDust() {
     <div className="flex w-full flex-col gap-8">
       <ToolIntro
         title="Depth Dust"
+        badge={<NpmLink size="chip" />}
         hint={
           <>
             Drag it to look around, or drop in your own picture. Inspired by{" "}

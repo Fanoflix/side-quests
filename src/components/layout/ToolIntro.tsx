@@ -6,16 +6,22 @@ export function ToolIntro({
   title,
   children,
   hint,
+  badge,
   className,
 }: {
   title: string
   children: ReactNode
   hint?: ReactNode
+  /** Sits beside the title, e.g. the npm link for tools in the package. */
+  badge?: ReactNode
   className?: string
 }) {
   return (
     <div className={cn("space-y-2", className)}>
-      <h1 className="text-xs text-muted-foreground">{title}</h1>
+      <div className="flex flex-wrap items-center gap-2.5">
+        <h1 className="text-xs text-muted-foreground">{title}</h1>
+        {badge}
+      </div>
       <p className="text-2xl font-medium tracking-tight text-balance sm:text-3xl">
         {children}
       </p>

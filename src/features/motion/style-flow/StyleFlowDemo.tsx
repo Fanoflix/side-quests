@@ -18,6 +18,8 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 import { ToolIntro } from "@/components/layout/ToolIntro"
+import { NpmLink } from "@/components/package/NpmLink"
+import { PackagePanel } from "@/components/package/PackagePanel"
 import { Panel } from "@/components/stage/Panel"
 import { ToolStage } from "@/components/stage/ToolStage"
 import { EASES } from "../eases"
@@ -76,6 +78,7 @@ export function StyleFlowDemo() {
       <div className="flex w-full flex-col gap-8">
         <ToolIntro
           title="Style Flow"
+          badge={<NpmLink size="chip" />}
           hint="Type your name in the panel, pick a preset, then copy the link to send it to someone."
         >
           Every letter picks its own weight, slant and font, live.
@@ -301,6 +304,19 @@ export function StyleFlowDemo() {
             Replay
           </Button>
         </ToolStage>
+
+        <PackagePanel
+          title="Use Style Flow in your app"
+          command="npm i side-quests-lab motion"
+        >
+          Then{" "}
+          <code className="font-mono text-foreground">{`import { StyleFlow } from "side-quests-lab"`}</code>
+          . It moves between two variable fonts, Recursive and Fraunces:{" "}
+          <code className="font-mono text-foreground">
+            npm i @fontsource-variable/recursive @fontsource-variable/fraunces
+          </code>
+          , and the npm page shows the imports.
+        </PackagePanel>
       </div>
     </TooltipProvider>
   )

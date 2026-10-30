@@ -2,6 +2,7 @@ import type { ReactNode } from "react"
 
 import { CharacterFlow } from "@/features/motion/character-flow/CharacterFlow"
 import { StyleFlow } from "@/features/motion/style-flow/StyleFlow"
+import { DEFAULT_PICTURE } from "@/features/canvas-stuff/depth-dust/useDepthDust"
 import { cn } from "@/lib/utils"
 import {
   DITHER_IMAGE,
@@ -79,11 +80,24 @@ function LowResPreview() {
   )
 }
 
+// A before and after in one frame: the flat original on the left, fading
+// into the black on every edge, and the dust it becomes on the right. The
+// field frames the dust at 72% of its half (FILL in field.ts); the original
+// gets 84%, which makes up for its faded edges and for the depth pushing the
+// dust's near parts towards you, so the two read as the same size.
 function DepthDustPreview() {
   const { ref, canvasRef } = useDepthDustPreview()
   return (
-    <div ref={ref} className="size-full bg-black">
-      <canvas ref={canvasRef} className="size-full" />
+    <div ref={ref} className="flex size-full bg-black">
+      <div className="grid w-1/2 place-items-center">
+        <img
+          src={DEFAULT_PICTURE}
+          alt=""
+          loading="lazy"
+          className="max-h-[84%] max-w-[84%] [mask-image:radial-gradient(closest-side,black_55%,transparent)] object-contain"
+        />
+      </div>
+      <canvas ref={canvasRef} className="h-full w-1/2" />
     </div>
   )
 }
