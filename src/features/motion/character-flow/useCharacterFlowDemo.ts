@@ -55,13 +55,6 @@ export const MODES: { key: Mode; label: string }[] = [
 const BASE_SIZE_REM = { words: 4.5, sentences: 1.75 } as const
 const GLYPH_WIDTH_EM = 0.58
 
-export const PACKAGE_TAGLINES = [
-  "Coming soon to npm",
-  "One component for React",
-  "NumberFlow's own curve",
-  "Any word, not just numbers",
-]
-
 export type Timing = {
   duration: number
   easeKey: EaseKey
@@ -73,9 +66,9 @@ export type Timing = {
 }
 
 export const DEFAULT_TIMING: Timing = {
-  duration: 0.5,
+  duration: 0.6,
   easeKey: "numberFlow",
-  slideDuration: 0.5,
+  slideDuration: 0.6,
   fadeDuration: 0.5,
   stagger: 0,
   maxSteps: 6,

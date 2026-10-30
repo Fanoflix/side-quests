@@ -18,6 +18,8 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 import { ToolIntro } from "@/components/layout/ToolIntro"
+import { NpmLink } from "@/components/package/NpmLink"
+import { PackagePanel } from "@/components/package/PackagePanel"
 import { Panel } from "@/components/stage/Panel"
 import { ToolStage } from "@/components/stage/ToolStage"
 import { EASES } from "../eases"
@@ -37,6 +39,13 @@ import {
  * track within the cooldown. Click the preview to shuffle. View-only — all state
  * lives in `useStyleFlowDemo`.
  */
+const STYLE_FLOW_USAGE = `import "@fontsource-variable/recursive/full.css"
+import "@fontsource-variable/fraunces/full.css"
+import "@fontsource-variable/fraunces/full-italic.css"
+import { StyleFlow } from "side-quests-lab"
+
+<StyleFlow value="Shimmer" />`
+
 export function StyleFlowDemo() {
   const {
     stage,
@@ -76,6 +85,7 @@ export function StyleFlowDemo() {
       <div className="flex w-full flex-col gap-8">
         <ToolIntro
           title="Style Flow"
+          badge={<NpmLink size="chip" />}
           hint="Type your name in the panel, pick a preset, then copy the link to send it to someone."
         >
           Every letter picks its own weight, slant and font, live.
@@ -301,6 +311,16 @@ export function StyleFlowDemo() {
             Replay
           </Button>
         </ToolStage>
+
+        <PackagePanel
+          title="Use Style Flow in your app"
+          command="npm i side-quests-lab motion @fontsource-variable/recursive @fontsource-variable/fraunces"
+          usage={STYLE_FLOW_USAGE}
+        >
+          It moves between two variable fonts, Recursive and Fraunces. The full
+          builds matter: the default Recursive build has no slant axis, so
+          slants would do nothing.
+        </PackagePanel>
       </div>
     </TooltipProvider>
   )

@@ -1,7 +1,10 @@
 import type { ReactNode } from "react"
-import { Check, Copy, Download } from "lucide-react"
+import { Download } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
+import { CodeBlock } from "@/components/package/CodeBlock"
+import { InstallCommand } from "@/components/package/InstallCommand"
+import { NpmLink } from "@/components/package/NpmLink"
 import { depthFileName } from "./snippet"
 import { useInstallCard } from "./useInstallCard"
 import type { SnippetInput } from "./snippet"
@@ -10,6 +13,13 @@ type Props = SnippetInput & {
   hasPicture: boolean
   onDownloadDepth: () => void
 }
+
+const CLI_DEPTH = `npm i -D @huggingface/transformers
+npx side-quests-lab depth picture.jpg picture-depth.png`
+
+const BROWSER_DEPTH = `import { estimateDepth } from "side-quests-lab/estimate"
+
+<DepthDust src={uploadedUrl} depthMap={estimateDepth} />`
 
 function Step({
   n,
@@ -40,17 +50,15 @@ function Inline({ children }: { children: ReactNode }) {
 }
 
 export function InstallCard({ hasPicture, onDownloadDepth, ...input }: Props) {
-  const { install, snippet, copied, copy } = useInstallCard(input)
+  const { install, snippet } = useInstallCard(input)
   const depthName = depthFileName(input.pictureName)
 
   return (
     <section className="flex flex-col gap-5 border-y border-border py-5">
       <div className="flex flex-col gap-1">
-        <div className="flex items-center gap-2.5">
+        <div className="flex flex-wrap items-center gap-2.5">
           <h2 className="text-base font-medium">Put it on your own site</h2>
-          <span className="border border-border px-1.5 py-px text-[11px] text-muted-foreground">
-            Coming soon to npm
-          </span>
+          <NpmLink className="ml-auto" />
         </div>
         <p className="text-sm text-muted-foreground">
           It's a React component. Tune it here, then follow these three steps.
@@ -60,20 +68,7 @@ export function InstallCard({ hasPicture, onDownloadDepth, ...input }: Props) {
 
       <ol className="flex flex-col gap-5">
         <Step n={1} title="Install it">
-          <div className="flex items-center justify-between gap-3 border border-border bg-muted/30 py-2 pr-2 pl-4">
-            <code className="font-mono text-sm">
-              <span className="text-muted-foreground">$ </span>
-              {install}
-            </code>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => copy("install")}
-              aria-label="Copy install command"
-            >
-              {copied === "install" ? <Check /> : <Copy />}
-            </Button>
-          </div>
+          <InstallCommand command={install} />
         </Step>
 
         <Step n={2} title="Get your picture's depth map">
@@ -92,17 +87,23 @@ export function InstallCard({ hasPicture, onDownloadDepth, ...input }: Props) {
             <Download />
             Download {depthName}
           </Button>
-          <p className="text-xs leading-relaxed text-muted-foreground">
-            Rather script it?{" "}
-            <Inline>npm i -D @huggingface/transformers</Inline> then{" "}
-            <Inline>
-              npx side-quests-lab depth picture.jpg picture-depth.png
-            </Inline>
-            . For pictures your visitors upload, pass{" "}
-            <Inline>estimateDepth</Inline> from{" "}
-            <Inline>side-quests-lab/estimate</Inline> as{" "}
-            <Inline>depthMap</Inline> and it's worked out in their browser.
-          </p>
+          <div className="flex flex-col gap-2 pt-2">
+            <p className="text-xs text-muted-foreground">
+              <span className="mr-1.5 border border-border px-1.5 py-px text-[11px]">
+                Optional
+              </span>
+              Make depth maps from the command line instead:
+            </p>
+            <CodeBlock code={CLI_DEPTH} />
+            <p className="pt-1 text-xs text-muted-foreground">
+              <span className="mr-1.5 border border-border px-1.5 py-px text-[11px]">
+                Optional
+              </span>
+              Or, for pictures your visitors upload, work it out in their
+              browser:
+            </p>
+            <CodeBlock code={BROWSER_DEPTH} />
+          </div>
         </Step>
 
         <Step n={3} title="Add it to a page">
@@ -110,20 +111,7 @@ export function InstallCard({ hasPicture, onDownloadDepth, ...input }: Props) {
             Put <Inline>{input.pictureName}</Inline> and{" "}
             <Inline>{depthName}</Inline> in your public folder, then:
           </p>
-          <div className="relative border border-border bg-muted/30">
-            <pre className="overflow-x-auto p-4 font-mono text-sm leading-relaxed">
-              {snippet}
-            </pre>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => copy("snippet")}
-              className="absolute top-2 right-2"
-            >
-              {copied === "snippet" ? <Check /> : <Copy />}
-              {copied === "snippet" ? "Copied" : "Copy"}
-            </Button>
-          </div>
+          <CodeBlock code={snippet} />
           <p className="text-xs text-muted-foreground">
             It fills its container's width and is 16:10 unless you give it a
             height.

@@ -45,6 +45,9 @@
     --sidebar-border: oklch(0.925 0.005 214.3);
     --sidebar-ring: oklch(0.723 0.014 214.4);
     --highlight: oklch(0.55 0.015 214);
+    /* Tools you can install: the theme's one real colour, from the sidebar
+       teal, dark enough to read on the light page. */
+    --downloadable: oklch(0.56 0.118 186);
     /* StyleFlow font tracks. */
     --font-sf-sans: 'Recursive Variable', sans-serif;
     --font-sf-serif: 'Fraunces Variable', serif;
@@ -84,6 +87,7 @@
     --sidebar-border: oklch(1 0 0 / 10%);
     --sidebar-ring: oklch(0.56 0.021 213.5);
     --highlight: oklch(0.62 0.012 214);
+    --downloadable: oklch(0.8 0.13 188);
 }
 
 @theme inline {
@@ -93,6 +97,7 @@
     --default-transition-duration: 175ms;
     --default-transition-timing-function: cubic-bezier(0, 0.55, 0.45, 1);
     --color-highlight: var(--highlight);
+    --color-downloadable: var(--downloadable);
     --color-sidebar-ring: var(--sidebar-ring);
     --color-sidebar-border: var(--sidebar-border);
     --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -195,10 +200,27 @@
   from { opacity: 0; translate: 0 6px; }
 }
 
+/* The Downloadable badge breathes: a slow glow in its own colour, so it
+   reads as something you can take with you rather than another label. Slow
+   enough (3s) to sit at the edge of attention instead of tugging at it. */
+.breathe {
+  animation: breathe 3s ease-in-out infinite;
+}
+
+@keyframes breathe {
+  0%, 100% {
+    box-shadow: 0 0 0 0 color-mix(in oklch, var(--downloadable) 0%, transparent);
+  }
+  50% {
+    box-shadow: 0 0 12px 1px color-mix(in oklch, var(--downloadable) 45%, transparent);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   ::view-transition-old(root),
   ::view-transition-new(root),
   .preview-wipe,
+  .breathe,
   .typing-dot {
     animation: none;
   }

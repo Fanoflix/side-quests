@@ -1,41 +1,18 @@
-import { Star } from "lucide-react"
+import { PackagePanel } from "@/components/package/PackagePanel"
 
-import { buttonVariants } from "@/components/ui/button"
-import { REPO_URL } from "@/features/nav/site"
-import { CharacterFlow } from "./CharacterFlow"
-import { usePackageTeaser } from "./usePackageTeaser"
+const USAGE = `import { CharacterFlow } from "side-quests-lab"
+
+<CharacterFlow value={status} />`
 
 export function PackageTeaser() {
-  const { ref, tagline } = usePackageTeaser()
-
   return (
-    <div
-      ref={ref}
-      className="flex flex-col gap-4 border-y border-border py-5 sm:flex-row sm:items-center sm:justify-between"
+    <PackagePanel
+      title="Use Character Flow in your app"
+      command="npm i side-quests-lab motion"
+      usage={USAGE}
     >
-      <div className="flex min-w-0 flex-col gap-1.5">
-        <div className="flex items-center gap-2.5">
-          <code className="font-mono text-sm text-muted-foreground">
-            <span className="opacity-50">$ </span>npm i side-quests-lab
-          </code>
-          <span className="border border-border px-1.5 py-px text-[11px] text-muted-foreground">
-            Soon
-          </span>
-        </div>
-        <CharacterFlow value={tagline} className="text-base font-medium" />
-      </div>
-      <a
-        href={REPO_URL}
-        target="_blank"
-        rel="noreferrer"
-        className={buttonVariants({
-          variant: "outline",
-          className: "self-start sm:self-auto",
-        })}
-      >
-        <Star />
-        Star to get notified
-      </a>
-    </div>
+      Change <code className="font-mono">value</code> and it rolls to the new
+      word. It takes its font, size and colour from wherever you put it.
+    </PackagePanel>
   )
 }

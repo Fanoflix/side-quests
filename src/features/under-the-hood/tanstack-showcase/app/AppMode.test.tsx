@@ -44,7 +44,7 @@ afterEach(cleanup)
 
 describe("AppMode on a narrow screen", () => {
   /**
-   * The inbox is a fixed 19rem. Side by side on a 390px screen that leaves the
+   * The inbox is a fixed 14.25rem. Side by side on a 390px screen that leaves the
    * detail about 80px, which is no pane at all — so below `lg` the two take
    * turns, and the classes are what decide which is on screen.
    */

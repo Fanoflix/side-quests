@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router"
-import { ArrowRight, ArrowUpRight, Search } from "lucide-react"
+import { ArrowRight, ArrowUpRight, Download, Search } from "lucide-react"
 
 import { CharacterFlow } from "@/features/motion/character-flow/CharacterFlow"
 import { SearchHint } from "@/features/nav/SearchHint"
@@ -9,13 +9,15 @@ import { cn } from "@/lib/utils"
 import { PREVIEWS } from "./Previews"
 import { useHomeIndex } from "./useHomeIndex"
 
+// Depth Dust leads as the wide card. At 32:9 across two columns its preview
+// is exactly as tall as a 16:9 one in a single column, so the card beside it
+// (Character Flow) lines up without a gap.
 const SPANS: Record<string, string> = {
-  "character-flow": "sm:col-span-2",
-  "tanstack-showcase": "sm:col-span-2 lg:col-span-1",
+  "depth-dust": "sm:col-span-2",
 }
 
 const PREVIEW_ASPECT: Record<string, string> = {
-  "character-flow": "lg:aspect-[32/9]",
+  "depth-dust": "lg:aspect-[32/9]",
 }
 
 const QUIET_PREVIEW = new Set([
@@ -94,6 +96,12 @@ export function HomeIndex() {
                   <span className="font-mono">{questNumber(tool)}</span>
                   <span aria-hidden>·</span>
                   <span>{tool.category}</span>
+                  {tool.downloadable && (
+                    <span className="breathe flex items-center gap-1 border border-downloadable/50 bg-downloadable/10 px-1.5 py-px font-medium text-downloadable">
+                      <Download className="size-3" />
+                      Downloadable
+                    </span>
+                  )}
                   <ArrowUpRight className="ml-auto size-4 transition-transform duration-175 ease-snap group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                 </div>
                 <h2 className="text-lg font-medium tracking-tight">

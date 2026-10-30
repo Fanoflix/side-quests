@@ -13,6 +13,7 @@ import { IntroLink, ToolIntro } from "@/components/layout/ToolIntro"
 import { Panel } from "@/components/stage/Panel"
 import { Range } from "@/components/stage/Range"
 import { ToolStage } from "@/components/stage/ToolStage"
+import { NpmLink } from "@/components/package/NpmLink"
 import { cn } from "@/lib/utils"
 import { CharacterFlow } from "./CharacterFlow"
 import { PackageTeaser } from "./PackageTeaser"
@@ -51,6 +52,7 @@ export function CharacterFlowDemo() {
     <div className="flex w-full flex-col gap-8">
       <ToolIntro
         title="Character Flow"
+        badge={<NpmLink size="chip" />}
         hint="Click the text to change it, or type your own. Every timing setting is in the panel on the right."
       >
         <IntroLink href="https://number-flow.barvian.me/">NumberFlow</IntroLink>
