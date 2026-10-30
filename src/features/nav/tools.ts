@@ -32,11 +32,14 @@ export type Tool = {
   added: string
   keywords: string[]
   controls?: boolean
+  /** Ships as a component in the side-quests-lab npm package. */
+  downloadable?: boolean
 }
 
 export const tools: Tool[] = [
   {
     slug: "character-flow",
+    downloadable: true,
     controls: true,
     to: "/character-flow",
     title: "Character Flow",
@@ -107,6 +110,7 @@ export const tools: Tool[] = [
   },
   {
     slug: "style-flow",
+    downloadable: true,
     controls: true,
     to: "/style-flow",
     title: "Style Flow",
@@ -221,6 +225,7 @@ export const tools: Tool[] = [
   },
   {
     slug: "depth-dust",
+    downloadable: true,
     controls: true,
     to: "/depth-dust",
     title: "Depth Dust",
