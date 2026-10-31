@@ -29,7 +29,8 @@ export const SITE_DESCRIPTION =
   "Small web experiments in graphics, motion and UI. Each one comes with a short, plain-English explanation of how it works."
 
 /** 1200×630 — the size every unfurl crops to. */
-export const OG_IMAGE = `${SITE_URL}/og.png`
+export const OG_VERSION = "2"
+export const OG_IMAGE = `${SITE_URL}/og.png?v=${OG_VERSION}`
 export const OG_IMAGE_WIDTH = "1200"
 export const OG_IMAGE_HEIGHT = "630"
 
@@ -92,7 +93,7 @@ export function toolMeta(slug: string): Meta[] {
     title: tool.title,
     description: tool.description,
     path: tool.to,
-    image: `${SITE_URL}/og/${tool.slug}.png`,
+    image: `${SITE_URL}/og/${tool.slug}.png?v=${OG_VERSION}`,
     imageAlt: `${tool.title}: ${tool.hook}`,
   })
 }
